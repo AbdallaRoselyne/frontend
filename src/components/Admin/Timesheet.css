@@ -1,0 +1,59 @@
+.timesheet-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .timesheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .timesheet-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .timesheet-summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .summary-card {
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 8px;
+    min-width: 150px;
+  }
+  
+  .summary-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .summary-card p {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  @media (max-width: 768px) {
+    .timesheet-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .timesheet-controls {
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
