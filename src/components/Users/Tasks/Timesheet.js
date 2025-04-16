@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Table, Spin, DatePicker, Button, message, Alert } from 'antd';
 import { FiLock, FiDownload } from 'react-icons/fi';
-import { jwtDecode } from 'jwt-decode'; // Make sure to install jwt-decode
+import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import './Timesheet.css';
 
@@ -16,7 +16,7 @@ const UserTimesheet = () => {
   const [error, setError] = useState(null);
   const [userEmail, setUserEmail] = useState(null);
 
-  const getEmailFromToken = () => {
+  const getEmailFromToken = useCallback(() => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
@@ -33,9 +33,9 @@ const UserTimesheet = () => {
       window.location.href = "/login";
       throw error;
     }
-  };
+  }, []);
 
-  const fetchTimesheetData = async () => {
+  const fetchTimesheetData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -57,7 +57,6 @@ const UserTimesheet = () => {
         }
       });
       
-      // Handle different response structures
       const responseData = response.data?.data || response.data || [];
       
       if (!Array.isArray(responseData)) {
@@ -78,11 +77,11 @@ const UserTimesheet = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange, getEmailFromToken]);
 
   useEffect(() => {
     fetchTimesheetData();
-  }, [dateRange]);
+  }, [dateRange, fetchTimesheetData]);
 
   const columns = [
     {

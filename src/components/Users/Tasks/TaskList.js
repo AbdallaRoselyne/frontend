@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { jwtDecode } from "jwt-decode";
@@ -6,21 +6,21 @@ import TaskCard from "./TaskCard";
 import "./tasks.css";
 
 const TaskList = () => {
-    const [tasks, setTasks] = useState([]);
-    const [filteredTasks, setFilteredTasks] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState({
-      status: 'all',
-      search: '',
-      timeRange: 'all' // Added time filter
-    });
+  const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    status: 'all',
+    search: '',
+    timeRange: 'all'
+  });
 
-  const getEmailFromToken = () => {
+  const getEmailFromToken = useCallback(() => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
 
-      const decoded = jwtDecode(token); // Updated function name
+      const decoded = jwtDecode(token);
       console.log("Decoded token:", decoded);
 
       if (!decoded.email) throw new Error("Email not found in token");
@@ -32,13 +32,13 @@ const TaskList = () => {
       window.location.href = "/login";
       throw error;
     }
-  };
+  }, []);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
       setLoading(true);
       const userEmail = getEmailFromToken();
-      console.log("Fetching tasks for:", userEmail); // Debug log
+      console.log("Fetching tasks for:", userEmail);
 
       const response = await fetch(
         `http://localhost:5000/api/tasks/user/${encodeURIComponent(userEmail)}`,
@@ -60,7 +60,7 @@ const TaskList = () => {
       }
 
       const data = await response.json();
-      console.log("Tasks received:", data); // Debug log
+      console.log("Tasks received:", data);
       setTasks(data);
       setFilteredTasks(data);
     } catch (error) {
@@ -71,11 +71,11 @@ const TaskList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getEmailFromToken]);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   useEffect(() => {
     const filtered = tasks.filter((task) => {
