@@ -8,9 +8,6 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "https://backend-production-e729.up.railway.app";
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,7 +17,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
+      const response = await axios.post("http://localhost:8080/auth/login", {
         email,
         password,
       });
