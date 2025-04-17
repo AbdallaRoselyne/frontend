@@ -6,73 +6,36 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  // Environment-aware API configuration
-  const API_BASE_URL =
-    window.location.hostname === "localhost"
-      ? "http://localhost:8080"
-      : "https://backend-production-e729.up.railway.app";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError("");
 
     if (!email.endsWith("@prodesign.mu")) {
       setError("Access restricted to prodesign.mu users.");
-      setIsLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post(
-        `${API_BASE_URL}/auth/login`,
-        {
-          email,
-          password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          timeout: 10000, // 10 second timeout
-        }
-      );
+      const response = await axios.post("http://localhost:8080/auth/login", {
+        email,
+        password,
+      });
 
-      // Store authentication data
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("email", email);
       localStorage.setItem("role", response.data.role);
 
       // Redirect based on role
-      navigate(
-        response.data.role === "admin" ? "/Admin/dashboard" : "/dashboard"
-      );
-    } catch (error) {
-      let errorMessage = "Login failed. Please try again.";
-
-      if (error.response) {
-        // Server responded with error status (4xx/5xx)
-        console.error("Server error:", error.response.data);
-        errorMessage =
-          error.response.data.message ||
-          `Server error (${error.response.status})`;
-      } else if (error.request) {
-        // Request was made but no response received
-        console.error("No response:", error.request);
-        errorMessage = "Server is not responding. Please try again later.";
+      if (response.data.role === "admin") {
+        navigate("/Admin/dashboard");
       } else {
-        // Other errors
-        console.error("Request error:", error.message);
-        errorMessage = error.message;
+        navigate("/dashboard");
       }
-
-      setError(errorMessage);
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Login failed. Please try again."
+      );
     }
   };
 
@@ -86,9 +49,6 @@ function Login() {
         {error && (
           <div className="mb-4 text-red-600 text-center border border-red-400 p-2 rounded">
             {error}
-            <p className="text-sm mt-1">
-              If this persists, please contact support@prodesign.mu
-            </p>
           </div>
         )}
 
@@ -101,11 +61,10 @@ function Login() {
               type="email"
               id="email"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
-              placeholder="user@prodesign.mu"
+              placeholder="Enter your @prodesign.mu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="username"
             />
           </div>
 
@@ -117,26 +76,23 @@ function Login() {
               type="password"
               id="password"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
-              placeholder="••••••••"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              autoComplete="current-password"
             />
           </div>
 
           <button
             type="submit"
-            className={`w-full bg-purple-700 text-white py-2 rounded-lg hover:bg-purple-900 transition-colors ${
-              isLoading ? "opacity-70 cursor-not-allowed" : ""
-            }`}
-            disabled={isLoading}
+            className="w-full bg-purple-700 text-white py-2 rounded-lg hover:bg-purple-900 transition-colors"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            Login
           </button>
 
           <p className="text-center text-sm text-gray-600 mt-4">
-            System access restricted to authorized @prodesign.mu users only.
+            Only users with <strong>@prodesign.mu</strong> email addresses can
+            access the dashboard.
           </p>
         </form>
       </div>
