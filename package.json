@@ -35,12 +35,12 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-  "start": "serve -s build -l 3000",
-  "build": "react-scripts build",
-  "predeploy": "npm run build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-},
+    "start": "serve -s build -l $PORT || 3000",
+    "build": "react-scripts build",
+    "predeploy": "npm run build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
