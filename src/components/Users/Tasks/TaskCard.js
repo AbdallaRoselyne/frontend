@@ -17,8 +17,8 @@ const statusConfig = {
   Completed: { color: "#4CAF50", bg: "#E8F5E9", icon: "🏁" },
 };
 
-const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:5000";
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://backend-production-e729.up.railway.app";
+
 
 const TaskCard = ({ task, onStatusChange, onTaskUpdate }) => {
   const [editingDate, setEditingDate] = useState(null);
