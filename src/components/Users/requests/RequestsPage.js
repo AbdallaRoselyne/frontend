@@ -4,6 +4,9 @@ import { FiUserPlus } from "react-icons/fi";
 import RequestsTable from "./RequestsTable";
 import RequestModal from "./RequestModal";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "https://backend-production-e729.up.railway.app";
+
+
 const RequestsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -24,9 +27,6 @@ const RequestsPage = () => {
     Task: "",
     Notes: "",
   });
-
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "https://backend-production-e729.up.railway.app";
-
 
   useEffect(() => {
     fetchRequests();
