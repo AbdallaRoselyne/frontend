@@ -4,9 +4,6 @@ import { FiUserPlus } from "react-icons/fi";
 import RequestsTable from "./RequestsTable";
 import RequestModal from "./RequestModal";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || "https://backend-production-e729.up.railway.app";
-
-
 const RequestsPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -41,7 +38,7 @@ const RequestsPage = () => {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/requests`);
+      const response = await axios.get("http://localhost:8080/api/requests");
       setRequestedMembers(response.data);
     } catch (error) {
       console.error("Error fetching requests:", error);
@@ -50,7 +47,7 @@ const RequestsPage = () => {
 
   const fetchProjects = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/projects`);
+      const response = await axios.get("http://localhost:8080/api/projects");
       setProjects(response.data);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -59,7 +56,7 @@ const RequestsPage = () => {
 
   const fetchMembers = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/members`);
+      const response = await axios.get("http://localhost:8080/api/members");
       setMembers(response.data);
     } catch (error) {
       console.error("Error fetching members:", error);
@@ -75,7 +72,7 @@ const RequestsPage = () => {
     try {
       if (editMode) {
         const response = await axios.put(
-          `${API_BASE_URL}/api/requests/${editId}`,
+          `http://localhost:8080/api/requests/${editId}`,
           requestData
         );
         setRequestedMembers(
@@ -85,7 +82,7 @@ const RequestsPage = () => {
         );
       } else {
         const response = await axios.post(
-          `${API_BASE_URL}/api/requests`,
+          "http://localhost:8080/api/requests",
           requestData
         );
         setRequestedMembers([...requestedMembers, response.data]);
@@ -106,7 +103,7 @@ const RequestsPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this request?")) {
       try {
-        await axios.delete(`${API_BASE_URL}/api/requests/${id}`);
+        await axios.delete(`http://localhost:8080/api/requests/${id}`);
         setRequestedMembers(requestedMembers.filter((req) => req._id !== id));
       } catch (error) {
         console.error("Error deleting request:", error);

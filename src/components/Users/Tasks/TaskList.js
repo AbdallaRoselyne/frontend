@@ -15,8 +15,6 @@ const TaskList = () => {
     timeRange: 'all'
   });
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "https://backend-production-e729.up.railway.app";
-
   const getEmailFromToken = useCallback(() => {
     try {
       const token = localStorage.getItem("token");
@@ -43,7 +41,7 @@ const TaskList = () => {
       console.log("Fetching tasks for:", userEmail);
 
       const response = await fetch(
-        `${API_BASE_URL}/api/tasks/user/${encodeURIComponent(userEmail)}`,
+        `http://localhost:8080/api/tasks/user/${encodeURIComponent(userEmail)}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -73,7 +71,7 @@ const TaskList = () => {
     } finally {
       setLoading(false);
     }
-  }, [getEmailFromToken, API_BASE_URL]);
+  }, [getEmailFromToken]);
 
   useEffect(() => {
     fetchTasks();
@@ -94,7 +92,7 @@ const TaskList = () => {
   const handleStatusChange = async (taskId, newStatus) => {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/tasks/${taskId}`,
+        `http://localhost:8080/api/tasks/${taskId}`,
         {
           method: "PUT",
           headers: {

@@ -50,10 +50,10 @@ const UserCalendar = () => {
       const userEmail = await getEmailFromToken();
       let endpoint =
         viewMode === "my-tasks"
-          ? `http://localhost:5000/api/tasks/user/${encodeURIComponent(
+          ? `http://localhost:8080/api/tasks/user/${encodeURIComponent(
               userEmail
             )}?status=Approved`
-          : "http://localhost:5000/api/tasks?status=Approved";
+          : "http://localhost:8080/api/tasks?status=Approved";
 
       const response = await fetch(endpoint, {
         headers: {

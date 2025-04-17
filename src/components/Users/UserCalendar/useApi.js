@@ -6,7 +6,7 @@ export const useApi = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
 
-      const response = await fetch(`http://localhost:5000${endpoint}`, {
+      const response = await fetch(`http://localhost:8080${endpoint}`, {
         ...options,
         headers: {
           Authorization: `Bearer ${token}`,
