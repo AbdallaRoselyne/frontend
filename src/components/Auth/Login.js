@@ -8,6 +8,11 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Environment-aware API base URL
+  const API_BASE_URL = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:8080'
+    : process.env.REACT_APP_API_URL || 'https://backend-production-e729.up.railway.app';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -17,9 +22,13 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
       localStorage.setItem("token", response.data.token);
@@ -33,9 +42,16 @@ function Login() {
         navigate("/dashboard");
       }
     } catch (error) {
+      console.error("Login error:", error);
       setError(
-        error.response?.data?.message || "Login failed. Please try again."
+        error.response?.data?.message || 
+        "Login failed. Please check your credentials and try again."
       );
+      
+      // Specific error for connection issues
+      if (error.message.includes("ERR_CONNECTION_REFUSED")) {
+        setError("Cannot connect to server. Please try again later.");
+      }
     }
   };
 
