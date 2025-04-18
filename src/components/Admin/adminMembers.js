@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { FiUserPlus, FiUserX, FiX, FiEdit, FiSearch, FiFilter } from "react-icons/fi";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 const AdminMembers = () => {
   const [showModal, setShowModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
@@ -27,7 +29,7 @@ const AdminMembers = () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch("http://localhost:5000/api/members");
+        const response = await fetch(`${API_BASE_URL}/api/members`);
         if (!response.ok) throw new Error("Failed to fetch members");
         const data = await response.json();
         setMembers(data);
@@ -64,7 +66,7 @@ const AdminMembers = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/members", {
+      const response = await fetch(`${API_BASE_URL}/api/members`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -98,7 +100,7 @@ const AdminMembers = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/members/${selectedMember._id}`,
+        `${API_BASE_URL}/api/members/${selectedMember._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -127,7 +129,7 @@ const AdminMembers = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/members/${id}`,
+        `${API_BASE_URL}/api/members/${id}`,
         { method: "DELETE" }
       );
 

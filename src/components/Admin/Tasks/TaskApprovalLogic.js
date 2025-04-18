@@ -12,6 +12,8 @@ export const useTaskApprovalLogic = () => {
   ]);
   const [comment, setComment] = useState("");
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
   const handleDateChange = (index, date) => {
     const newWeekHours = [...weekHours];
     newWeekHours[index].date = date;
@@ -70,7 +72,7 @@ export const useTaskApprovalLogic = () => {
       const dateString = dateObj.toISOString().split('T')[0];
   
       const response = await fetch(
-        `http://localhost:5000/api/tasks/${taskId}?date=${dateString}`,
+        `${API_BASE_URL}/api/tasks/${taskId}?date=${dateString}`,
         { method: "DELETE" }
       );
   
@@ -82,21 +84,17 @@ export const useTaskApprovalLogic = () => {
       const result = await response.json();
       
       if (result.deleted) {
-        // If entire task was deleted
         setSelectedTask(null);
         toast.success("Task deleted (no remaining dates)");
       } else {
-        // Update the selectedTask with the server's response
         const updatedTask = {
           ...result.task,
           weekHours: result.task.weekHours,
-          // Keep the original _id format
           _id: selectedTask._id
         };
         
         setSelectedTask(updatedTask);
         
-        // Update weekHours state to match the remaining dates
         const remainingWeekHours = weekHours.filter(
           wh => !wh.date || new Date(wh.date).toISOString().split('T')[0] !== dateString
         );
@@ -126,7 +124,7 @@ export const useTaskApprovalLogic = () => {
       );
 
       const response = await fetch(
-        `http://localhost:5000/api/requests/${selectedTask._id}/approve`,
+        `${API_BASE_URL}/api/requests/${selectedTask._id}/approve`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -162,7 +160,7 @@ export const useTaskApprovalLogic = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/requests/${selectedTask._id}/reject`,
+        `${API_BASE_URL}/api/requests/${selectedTask._id}/reject`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -195,17 +193,13 @@ export const useTaskApprovalLogic = () => {
     if (!validateWeekHours()) return;
 
     try {
-      // Prepare weekHours data with properly formatted dates
       const filledWeekHours = weekHours
         .filter((day) => day.date && day.hours > 0)
         .map((day) => {
-          // Ensure date is properly formatted
           const date = day.date instanceof Date ? day.date : new Date(day.date);
-
           if (isNaN(date.getTime())) {
             throw new Error(`Invalid date for ${day.day}`);
           }
-
           return {
             day: day.day,
             date: date.toISOString(),
@@ -213,21 +207,17 @@ export const useTaskApprovalLogic = () => {
           };
         });
 
-      // Use base ID (remove any date suffix)
       const taskId = selectedTask._id.split("-")[0];
-
-      // Prepare update data
       const updateData = {
         ...selectedTask,
         weekHours: filledWeekHours,
       };
 
-      // Remove React-specific properties if they exist
       delete updateData._reactInternalFiber;
       delete updateData._reactFragment;
 
       const response = await fetch(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `${API_BASE_URL}/api/tasks/${taskId}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -242,7 +232,6 @@ export const useTaskApprovalLogic = () => {
 
       const updatedTask = await response.json();
 
-      // Update state based on task status
       if (updatedTask.status === "Approved") {
         setApprovedTasks((prev) =>
           prev.map((task) =>

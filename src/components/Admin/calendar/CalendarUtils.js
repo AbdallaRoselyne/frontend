@@ -1,7 +1,9 @@
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export const fetchApprovedTasks = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/tasks?status=Approved"
+      `${API_BASE_URL}/api/tasks?status=Approved`
     );
     const data = await response.json();
     return data;

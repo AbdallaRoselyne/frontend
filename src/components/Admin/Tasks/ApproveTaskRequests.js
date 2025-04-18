@@ -7,6 +7,8 @@ import PendingTasksTable from "./PendingTasksTable";
 import TaskDetailsPanel from "./TaskDetailsPanel";
 import ApprovedRejectedTasksTable from "./ApprovedRejectedTasksTable";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 const ApproveTaskRequests = () => {
   const [taskRequests, setTaskRequests] = useState([]);
   const [approvedTasks, setApprovedTasks] = useState([]);
@@ -39,7 +41,7 @@ const ApproveTaskRequests = () => {
 
   const fetchTaskRequests = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/requests");
+      const response = await fetch(`${API_BASE_URL}/api/requests`);
       const data = await response.json();
       setTaskRequests(data);
     } catch (error) {
@@ -50,7 +52,7 @@ const ApproveTaskRequests = () => {
 
   const fetchApprovedRejectedTasks = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/tasks");
+      const response = await fetch(`${API_BASE_URL}/api/tasks`);
       const data = await response.json();
       const approved = data.filter((task) => task.status === "Approved");
       const rejected = data.filter((task) => task.status === "Rejected");
@@ -61,7 +63,6 @@ const ApproveTaskRequests = () => {
       toast.error("Failed to fetch tasks");
     }
   };
-
   const handleViewDetails = (task) => {
     setSelectedTask(task);
     // If the task has weekHours, set them for viewing
