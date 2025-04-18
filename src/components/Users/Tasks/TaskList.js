@@ -5,6 +5,8 @@ import { jwtDecode } from "jwt-decode";
 import TaskCard from "./TaskCard";
 import "./tasks.css";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
@@ -41,7 +43,7 @@ const TaskList = () => {
       console.log("Fetching tasks for:", userEmail);
 
       const response = await fetch(
-        `http://localhost:8080/api/tasks/user/${encodeURIComponent(userEmail)}`,
+        `${API_BASE_URL}/api/tasks/user/${encodeURIComponent(userEmail)}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -92,7 +94,7 @@ const TaskList = () => {
   const handleStatusChange = async (taskId, newStatus) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/tasks/${taskId}`,
+        `${API_BASE_URL}/api/tasks/${taskId}`,
         {
           method: "PUT",
           headers: {

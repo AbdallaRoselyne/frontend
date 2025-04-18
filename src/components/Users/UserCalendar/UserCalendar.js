@@ -11,6 +11,8 @@ import { FilterBar } from "./FilterBar";
 import { TaskDetailsModal } from "./TaskDetailsModal";
 import "./UserCalendar.css";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 const UserCalendar = () => {
   const [viewMode, setViewMode] = useState("my-tasks");
   const [selectedTask, setSelectedTask] = useState(null);
@@ -50,10 +52,10 @@ const UserCalendar = () => {
       const userEmail = await getEmailFromToken();
       let endpoint =
         viewMode === "my-tasks"
-          ? `http://localhost:8080/api/tasks/user/${encodeURIComponent(
+          ? `${API_BASE_URL}/api/tasks/user/${encodeURIComponent(
               userEmail
             )}?status=Approved`
-          : "http://localhost:8080/api/tasks?status=Approved";
+          : `${API_BASE_URL}/api/tasks?status=Approved`;
 
       const response = await fetch(endpoint, {
         headers: {

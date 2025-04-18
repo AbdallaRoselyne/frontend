@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 export const useApi = () => {
   const fetchData = useCallback(async (endpoint, options = {}) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token found");
 
-      const response = await fetch(`http://localhost:8080${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers: {
           Authorization: `Bearer ${token}`,
