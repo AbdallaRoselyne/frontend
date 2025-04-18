@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,9 +19,11 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
+      }, {
+        withCredentials: true 
       });
 
       localStorage.setItem("token", response.data.token);
@@ -27,15 +31,16 @@ function Login() {
       localStorage.setItem("role", response.data.role);
 
       // Redirect based on role
-      if (response.data.role === "admin") {
-        navigate("/Admin/dashboard");
-      } else {
-        navigate("/dashboard");
-      }
+      navigate(response.data.role === "admin" 
+               ? "/Admin/dashboard" 
+               : "/dashboard");
+
     } catch (error) {
       setError(
-        error.response?.data?.message || "Login failed. Please try again."
+        error.response?.data?.message || 
+        "Login failed. Please try again."
       );
+      console.error("Login error:", error);
     }
   };
 
