@@ -4,6 +4,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Users/Sidebar";
@@ -19,6 +20,7 @@ import AdminApprove from "./components/Admin/AdminApprove";
 import TaskList from "./components/Users/Tasks/TaskList"; 
 import UserTimesheet from "./components/Users/Tasks/Timesheet";
 import AdminTimesheet from "./components/Admin/AdminTimesheet"; 
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
 
 /*Layout for About Us Page */
 function AboutUsLayout({ children }) {
@@ -64,81 +66,88 @@ function App() {
         />
         <Route path="/login" element={<Login />} />
 
-        {/* User Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <UserLayout>
-              <UserDashboard />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/members"
-          element={
-            <UserLayout>
-              <RequestsPage />
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/tasks"
-          element={
-            <UserLayout>
-              <TaskList /> {/* Changed from TasksPage to TaskList */}
-            </UserLayout>
-          }
-        />
-        <Route
-          path="/timesheet"
-          element={
-            <UserLayout>
-              <UserTimesheet />
-            </UserLayout>
-          }
-        />
+        {/* Protected User Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/dashboard"
+            element={
+              <UserLayout>
+                <UserDashboard />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/members"
+            element={
+              <UserLayout>
+                <RequestsPage />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/tasks"
+            element={
+              <UserLayout>
+                <TaskList />
+              </UserLayout>
+            }
+          />
+          <Route
+            path="/timesheet"
+            element={
+              <UserLayout>
+                <UserTimesheet />
+              </UserLayout>
+            }
+          />
+        </Route>
 
-        {/* Admin Routes */}
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminLayout>
-              <AdminCalendar />
-            </AdminLayout>
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <AdminLayout>
-              <AdminMembers />
-            </AdminLayout>
-          }
-        />
-        <Route
-          path="/admin/tasks"
-          element={
-            <AdminLayout>
-              <AdminApprove />
-            </AdminLayout>
-          }
-        />
-        <Route
-          path="/admin/budget"
-          element={
-            <AdminLayout>
-              <BudgetTracking />
-            </AdminLayout>
-          }
-        />
-        <Route
-          path="/admin/timesheet"
-          element={
-            <AdminLayout>
-              <AdminTimesheet />
-            </AdminLayout>
-          }
-        />
+        {/* Protected Admin Routes */}
+        <Route element={<ProtectedRoute requiredRole="admin" />}>
+          <Route
+            path="/admin/dashboard"
+            element={
+              <AdminLayout>
+                <AdminCalendar />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <AdminLayout>
+                <AdminMembers />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/tasks"
+            element={
+              <AdminLayout>
+                <AdminApprove />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/budget"
+            element={
+              <AdminLayout>
+                <BudgetTracking />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path="/admin/timesheet"
+            element={
+              <AdminLayout>
+                <AdminTimesheet />
+              </AdminLayout>
+            }
+          />
+        </Route>
+
+        {/* Redirect invalid paths */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
