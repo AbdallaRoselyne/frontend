@@ -45,9 +45,8 @@ function Login() {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="bg-white shadow-md rounded-lg p-8 max-w-md w-full">
-        <h2 className="text-2xl font-bold text-center mb-6 text-purple-800">
+      <div className="bg-white shadow-md rounded-lg px-20 py-20 max-w-md w-full mx-auto">
+        <h2 className="text-xl font-semibold text-center mb-3 text-purple-800">
           Login
         </h2>
 
@@ -73,7 +72,7 @@ function Login() {
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4">  
             <label className="block text-gray-700 mb-2" htmlFor="password">
               Password
             </label>
@@ -101,7 +100,6 @@ function Login() {
           </p>
         </form>
       </div>
-    </div>
   );
 }
 
