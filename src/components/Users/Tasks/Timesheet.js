@@ -4,7 +4,6 @@ import { Table, Spin, DatePicker, Button, message, Alert } from 'antd';
 import { FiLock, FiDownload } from 'react-icons/fi';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
-import './Timesheet.css';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
@@ -112,7 +111,7 @@ const UserTimesheet = () => {
       dataIndex: 'locked',
       key: 'locked',
       render: locked => (
-        <span style={{ color: locked ? '#52c41a' : '#faad14' }}>
+        <span className={locked ? 'text-[#c8db00]' : 'text-yellow-500'}>
           {locked ? (
             <>
               <FiLock /> Locked
@@ -153,7 +152,7 @@ const UserTimesheet = () => {
 
   if (error) {
     return (
-      <div className="timesheet-container">
+      <div className="p-5 max-w-6xl mx-auto">
         <Alert
           message="Error"
           description={error}
@@ -163,7 +162,7 @@ const UserTimesheet = () => {
         <Button 
           type="primary" 
           onClick={fetchTimesheetData}
-          style={{ marginTop: 16 }}
+          className="mt-4 bg-[#a8499c] hover:bg-[#c8db00]"
         >
           Retry
         </Button>
@@ -172,37 +171,38 @@ const UserTimesheet = () => {
   }
 
   return (
-    <div className="timesheet-container">
-      <div className="timesheet-header">
-        <h2>My Timesheet</h2>
-        <div className="timesheet-controls">
+    <div className="p-5 max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-5 flex-wrap gap-4">
+        <h2 className="text-2xl font-bold text-[#a8499c]">My Timesheet</h2>
+        <div className="flex items-center gap-2">
           <DatePicker.RangePicker
             onChange={dates => setDateRange(dates)}
-            style={{ marginRight: 16 }}
+            className="mr-4"
           />
           <Button 
             type="primary" 
             icon={<FiDownload />} 
             onClick={exportToCSV}
             disabled={data.length === 0 || !userEmail}
+            className="bg-[#a8499c] hover:bg-[#818181] text-white"
           >
             Export
           </Button>
         </div>
       </div>
 
-      <div className="timesheet-summary">
-        <div className="summary-card">
-          <h3>Total Hours</h3>
-          <p>{totalHours}</p>
+      <div className="flex gap-4 mb-5 flex-wrap">
+        <div className="bg-gray-100 p-4 rounded-lg min-w-[150px]">
+          <h3 className="m-0 mb-2 text-sm text-gray-600">Total Hours</h3>
+          <p className="m-0 text-2xl font-bold text-[#a8499c]">{totalHours}</p>
         </div>
-        <div className="summary-card">
-          <h3>Days Worked</h3>
-          <p>{data.length}</p>
+        <div className="bg-gray-100 p-4 rounded-lg min-w-[150px]">
+          <h3 className="m-0 mb-2 text-sm text-gray-600">Days Worked</h3>
+          <p className="m-0 text-2xl font-bold text-[#a8499c]">{data.length}</p>
         </div>
-        <div className="summary-card">
-          <h3>Average Hours/Day</h3>
-          <p>{data.length ? (totalHours / data.length).toFixed(2) : 0}</p>
+        <div className="bg-gray-100 p-4 rounded-lg min-w-[150px]">
+          <h3 className="m-0 mb-2 text-sm text-gray-600">Average Hours/Day</h3>
+          <p className="m-0 text-2xl font-bold text-[#a8499c]">{data.length ? (totalHours / data.length).toFixed(2) : 0}</p>
         </div>
       </div>
 
