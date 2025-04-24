@@ -9,17 +9,16 @@ import {
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Users/Sidebar";
 import AdminSidebar from "./components/Admin/Adminsidebar";
-import AboutUs from "./components/AboutUs";
-import Login from "./components/Auth/Login";
+import LandingPage from "./components/LandingPage";
 import UserDashboard from "./components/Users/UserCalendar/UserCalendar";
 import RequestsPage from "./components/Users/requests/RequestsPage";
 import AdminMembers from "./components/Admin/adminMembers";
 import AdminCalendar from "./components/Admin/calendar/CalendarPage";
-import BudgetTracking from './components/Admin/Budget/BudgetTracking';
-import AdminApprove from "./components/Admin/AdminApprove"; 
-import TaskList from "./components/Users/Tasks/TaskList"; 
+import BudgetTracking from "./components/Admin/Budget/BudgetTracking";
+import AdminApprove from "./components/Admin/AdminApprove";
+import TaskList from "./components/Users/Tasks/TaskList";
 import UserTimesheet from "./components/Users/Tasks/Timesheet";
-import AdminTimesheet from "./components/Admin/AdminTimesheet"; 
+import AdminTimesheet from "./components/Admin/AdminTimesheet";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 
 /*Layout for About Us Page */
@@ -60,11 +59,12 @@ function App() {
           path="/"
           element={
             <AboutUsLayout>
-              <AboutUs />
+              <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-6 bg-gray-100">
+                <LandingPage />
+              </div>
             </AboutUsLayout>
           }
         />
-        <Route path="/login" element={<Login />} />
 
         {/* Protected User Routes */}
         <Route element={<ProtectedRoute />}>
