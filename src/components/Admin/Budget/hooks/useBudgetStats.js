@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 
-export const useBudgetStats = (projects) => {
+export const useBudgetStats = (projects = []) => {
   return useMemo(() => {
-    const totalBudget = projects.reduce((sum, p) => sum + (parseFloat(p.budget) || 0), 0);
-    const totalSpent = projects.reduce((sum, p) => sum + (parseFloat(p.budgetSpent) || 0), 0);
-    const totalHours = projects.reduce((sum, p) => sum + (parseFloat(p.hours) || 0), 0);
-    const totalLogged = projects.reduce((sum, p) => sum + (parseFloat(p.hoursLogged) || 0), 0);
+    const safeProjects = Array.isArray(projects) ? projects : [];
+    
+    const totalBudget = safeProjects.reduce((sum, p) => sum + (parseFloat(p.budget) || 0), 0);
+    const totalSpent = safeProjects.reduce((sum, p) => sum + (parseFloat(p.budgetSpent) || 0), 0);
+    const totalHours = safeProjects.reduce((sum, p) => sum + (parseFloat(p.hours) || 0), 0);
+    const totalLogged = safeProjects.reduce((sum, p) => sum + (parseFloat(p.hoursLogged) || 0), 0);
     const remainingBudget = totalBudget - totalSpent;
 
     return {
@@ -14,8 +16,8 @@ export const useBudgetStats = (projects) => {
       totalHours,
       totalLogged,
       remainingBudget,
-      budgetSpentPercentage: (totalSpent / totalBudget) * 100 || 0,
-      hoursLoggedPercentage: (totalLogged / totalHours) * 100 || 0,
+      budgetSpentPercentage: totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
+      hoursLoggedPercentage: totalHours > 0 ? (totalLogged / totalHours) * 100 : 0,
     };
   }, [projects]);
 };

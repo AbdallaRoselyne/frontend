@@ -20,7 +20,7 @@ const RequestModal = ({
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center p-4 z-50">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
-          <h2 className="text-xl font-semibold text-gray-800">
+          <h2 className="text-xl font-semibold text-[#a8499c]">
             {selectedTask
               ? "Request Details"
               : editMode
@@ -29,7 +29,7 @@ const RequestModal = ({
           </h2>
           <button
             onClick={selectedTask ? () => setSelectedTask(null) : resetForm}
-            className="text-gray-500 hover:text-gray-800 p-1 rounded-full hover:bg-gray-100"
+            className="text-[#818181] hover:text-[#a8499c] p-1 rounded-full hover:bg-gray-100"
           >
             <FiX className="text-xl" />
           </button>
@@ -66,7 +66,7 @@ const RequestModal = ({
 
 const DetailItem = ({ label, value }) => (
   <div>
-    <h3 className="text-sm font-medium text-gray-500">{label}</h3>
+    <h3 className="text-sm font-medium text-[#818181]">{label}</h3>
     <p className="mt-1 text-gray-900">{value || "-"}</p>
   </div>
 );

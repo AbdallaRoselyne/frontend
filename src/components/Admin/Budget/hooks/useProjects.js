@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { API_URL } from "../constants";
+
+export const API_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8080/api/projects";
 
 export const useProjects = () => {
   const [projects, setProjects] = useState([]);
@@ -10,11 +12,21 @@ export const useProjects = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
+      setError("");
       const response = await axios.get(API_URL);
-      setProjects(response.data);
+      console.log("API Response:", response); // Debug log
+      if (response.data && Array.isArray(response.data)) {
+        setProjects(response.data);
+      } else {
+        throw new Error("Invalid data format received from API");
+      }
     } catch (error) {
       console.error("Error fetching projects:", error);
-      setError("Failed to load projects. Please try again.");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Failed to load projects. Please try again."
+      );
     } finally {
       setLoading(false);
     }

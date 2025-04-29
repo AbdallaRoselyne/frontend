@@ -95,9 +95,11 @@ const BudgetTracking = () => {
     setSelectedProject(project);
   };
 
-  const filteredProjects = projects.filter(project =>
-    project[filterCriteria]?.toString().toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredProjects = Array.isArray(projects) 
+    ? projects.filter(project =>
+        project[filterCriteria]?.toString().toLowerCase().includes(filter.toLowerCase())
+      )
+    : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
