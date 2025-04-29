@@ -63,14 +63,14 @@ const RequestForm = ({
     <form className="space-y-4" onSubmit={handleFormSubmit}>
       {/* Member Name Dropdown */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Member Name
         </label>
         <select
           name="requestedName"
           value={selectedMember || ""}
           onChange={handleMemberChange}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent transition-colors"
           required
         >
           <option value="">Select Member</option>
@@ -84,7 +84,7 @@ const RequestForm = ({
 
       {/* Email Field */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Email
         </label>
         <input
@@ -92,7 +92,7 @@ const RequestForm = ({
           name="email"
           value={requestData.email || ""}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
           required
           readOnly
         />
@@ -100,14 +100,14 @@ const RequestForm = ({
 
       {/* Project Dropdown */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Project
         </label>
         <select
           name="project"
           value={selectedProject || ""}
           onChange={handleProjectChange}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent transition-colors"
           required
         >
           <option value="">Select Project</option>
@@ -121,7 +121,7 @@ const RequestForm = ({
 
       {/* Project Code */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Project Code
         </label>
         <input
@@ -129,7 +129,7 @@ const RequestForm = ({
           name="projectCode"
           value={requestData.projectCode || ""}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
           required
           readOnly
         />
@@ -137,7 +137,7 @@ const RequestForm = ({
 
       {/* Department */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Department
         </label>
         <input
@@ -145,7 +145,7 @@ const RequestForm = ({
           name="department"
           value={requestData.department || ""}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-200 rounded-lg bg-gray-50 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
           required
           readOnly
         />
@@ -153,7 +153,7 @@ const RequestForm = ({
 
       {/* Hours */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Hours
         </label>
         <input
@@ -161,14 +161,14 @@ const RequestForm = ({
           name="hours"
           value={requestData.hours || ""}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
           required
         />
       </div>
 
       {/* Requester */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Requester
         </label>
         <input
@@ -176,14 +176,14 @@ const RequestForm = ({
           name="requester"
           value={requestData.requester || ""}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
           required
         />
       </div>
 
       {/* Task */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Task
         </label>
         <input
@@ -191,14 +191,14 @@ const RequestForm = ({
           name="Task"
           value={requestData.Task || ""}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
           required
         />
       </div>
 
       {/* Notes */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#818181] mb-1">
           Notes
         </label>
         <textarea
@@ -206,13 +206,13 @@ const RequestForm = ({
           value={requestData.Notes || ""}
           onChange={handleChange}
           rows={3}
-          className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
         />
       </div>
 
       <button
         type="submit"
-        className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium"
+        className="w-full bg-[#a8499c] text-white px-4 py-3 rounded-lg hover:bg-[#8d3a82] focus:outline-none focus:ring-2 focus:ring-[#a8499c]/50 focus:ring-offset-2 transition-colors font-medium"
       >
         {editMode ? "Update Request" : "Submit Request"}
       </button>

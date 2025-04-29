@@ -142,23 +142,23 @@ const RequestsPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="sm:flex sm:items-center sm:justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold leading-tight text-gray-900">Resource Requests</h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Manage all your team resource requests in one place
-            </p>
-          </div>
-          <button
-            onClick={() => setShowModal(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <FiUserPlus className="-ml-1 mr-2 h-5 w-5" />
-            New Request
-          </button>
+    <div className="min-h-screen bg-[#818181]/5 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto">
+      <div className="sm:flex sm:items-center sm:justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold leading-tight text-gray-900">Resource Requests</h1>
+          <p className="mt-2 text-sm text-[#818181]">
+            Manage all your team resource requests in one place
+          </p>
         </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#a8499c] hover:bg-[#8d3a82] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#a8499c]/50 transition-colors"
+        >
+          <FiUserPlus className="-ml-1 mr-2 h-5 w-5" />
+          New Request
+        </button>
+      </div>
 
         <RequestsTable
           filteredMembers={filteredMembers}

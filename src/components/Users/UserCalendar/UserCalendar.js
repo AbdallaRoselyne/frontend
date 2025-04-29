@@ -9,7 +9,6 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { FiCalendar, FiRefreshCw, FiUser, FiUsers } from "react-icons/fi";
 import { FilterBar } from "./FilterBar";
 import { TaskDetailsModal } from "./TaskDetailsModal";
-import "./UserCalendar.css";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
@@ -64,7 +63,6 @@ const UserCalendar = () => {
       });
 
       const data = await response.json();
-      console.log("Fetched tasks:", data);
       setTasks(data);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -81,20 +79,18 @@ const UserCalendar = () => {
 
   const getCalendarEvents = useCallback(() => {
     const events = [];
-    const processedTaskDates = new Map(); // Tracks processed taskId + date combinations
-    const userDayMap = {}; // Tracks each user's schedule per day
+    const processedTaskDates = new Map();
+    const userDayMap = {};
 
-    // Sort tasks by date (earlier first)
     const sortedTasks = [...tasks].sort((a, b) => {
       const getTaskDate = (task) => {
         if (task.weekHours?.[0]?.date) return new Date(task.weekHours[0].date);
-        return new Date(0); // Invalid date will be sorted first
+        return new Date(0);
       };
       return getTaskDate(a) - getTaskDate(b);
     });
 
     sortedTasks.forEach((task) => {
-      // Filter conditions
       if (task.status !== "Approved") return;
       if (
         viewMode === "my-tasks" &&
@@ -104,9 +100,8 @@ const UserCalendar = () => {
 
       const email = task.email.toLowerCase();
       const displayName = task.requestedName || email.split("@")[0];
-      const taskId = task._id.split("-")[0]; // Normalize task ID
+      const taskId = task._id.split("-")[0];
 
-      // Process weekHours if available
       if (task.weekHours?.length > 0) {
         task.weekHours.forEach((wh) => {
           if (!wh.date) return;
@@ -119,32 +114,24 @@ const UserCalendar = () => {
             const compositeKey = `${taskId}-${dateKey}`;
             const userKey = `${email}-${dateKey}`;
 
-            // Skip duplicates
             if (processedTaskDates.has(compositeKey)) return;
             processedTaskDates.set(compositeKey, true);
 
-            // Initialize user's day schedule if not exists
             if (!userDayMap[userKey]) {
               userDayMap[userKey] = {
                 currentStart: new Date(date),
               };
-              // Set workday start time (8:30 AM)
               userDayMap[userKey].currentStart.setHours(8, 30, 0, 0);
             }
 
-            // Calculate duration (minimum 0.5 hours)
             const duration = Math.max(wh.hours || 1, 0.5);
-
-            // Create event time range
             const start = new Date(userDayMap[userKey].currentStart);
             const end = new Date(start);
             end.setHours(start.getHours() + duration);
 
-            // Workday end time (4:45 PM)
             const maxEndTime = new Date(date);
             maxEndTime.setHours(16, 45, 0, 0);
 
-            // Check if task fits in workday
             if (end > maxEndTime) {
               console.warn(
                 `Task "${task.Task}" exceeds work hours for ${displayName} on ${dateKey}`
@@ -166,7 +153,6 @@ const UserCalendar = () => {
               },
             });
 
-            // Update currentStart for next task (with 15min buffer)
             userDayMap[userKey].currentStart = new Date(end);
             userDayMap[userKey].currentStart.setMinutes(end.getMinutes() + 0);
           } catch (e) {
@@ -180,17 +166,17 @@ const UserCalendar = () => {
   }, [tasks, viewMode, currentUserEmail]);
 
   const getDepartmentColor = (department) => {
-    if (!department) return "#64748b";
+    if (!department) return "#818181";
 
     switch (department.toLowerCase()) {
       case "leed":
-        return "#8b5cf6";
+        return "#a8499c";
       case "bim":
-        return "#10b981";
+        return "#c8db00";
       case "mep":
-        return "#3b82f6";
+        return "#818181";
       default:
-        return "#64748b";
+        return "#818181";
     }
   };
 
@@ -205,7 +191,6 @@ const UserCalendar = () => {
   };
 
   const filteredEvents = getCalendarEvents().filter((event) => {
-    // Apply filters if they exist
     if (
       filters.project &&
       !event.extendedProps.project
@@ -231,47 +216,45 @@ const UserCalendar = () => {
   });
 
   return (
-    <div className="calendar-container">
+    <div className="flex flex-col min-h-screen bg-gray-50">
       <ToastContainer position="top-right" autoClose={3000} />
 
-      <div className="calendar-header">
-        <div className="header-title">
-          <FiCalendar className="header-icon" />
-          <h1>Task Schedule</h1>
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center p-4 bg-white border-b border-gray-200 shadow-sm">
+        <div className="flex items-center gap-3 mb-4 md:mb-0">
+          <FiCalendar className="text-[#a8499c] text-2xl" />
+          <h1 className="text-xl font-semibold text-gray-900">Task Schedule</h1>
           {currentUserEmail && (
-            <span className="user-badge">
-              <FiUser className="user-icon" />
+            <span className="flex items-center gap-1 ml-2 px-3 py-1 bg-[#a8499c]/10 rounded-full text-sm text-[#a8499c]">
+              <FiUser className="text-[#a8499c]" />
               {currentUserEmail}
             </span>
           )}
         </div>
 
-        <div className="header-controls">
-          <div className="view-toggle">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex bg-gray-50 rounded-lg p-1 border border-gray-200">
             <button
-              className={viewMode === "my-tasks" ? "active" : ""}
+              className={`flex items-center gap-2 px-3 py-1 rounded-md text-sm ${viewMode === "my-tasks" ? "bg-[#a8499c] text-white" : "text-gray-500"}`}
               onClick={() => handleViewModeChange("my-tasks")}
             >
-              <FiUser className="button-icon" />
+              <FiUser />
               My Tasks
             </button>
             <button
-              className={viewMode === "team-tasks" ? "active" : ""}
+              className={`flex items-center gap-2 px-3 py-1 rounded-md text-sm ${viewMode === "team-tasks" ? "bg-[#a8499c] text-white" : "text-gray-500"}`}
               onClick={() => handleViewModeChange("team-tasks")}
             >
-              <FiUsers className="button-icon" />
+              <FiUsers />
               Team Tasks
             </button>
           </div>
 
           <button
             onClick={fetchTasks}
-            className="refresh-btn"
             disabled={isLoading}
+            className="flex items-center gap-2 px-3 py-1 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
           >
-            <FiRefreshCw
-              className={`refresh-icon ${isLoading ? "animate-spin" : ""}`}
-            />
+            <FiRefreshCw className={`${isLoading ? "animate-spin" : ""}`} />
             Refresh
           </button>
         </div>
@@ -289,35 +272,35 @@ const UserCalendar = () => {
         }
       />
 
-      <div className="calendar-view-container">
-        <div className="view-options">
+      <div className="flex-1 p-4">
+        <div className="flex gap-2 mb-4">
           <button
             onClick={() => handleViewChange("dayGridMonth")}
-            className={calendarView === "dayGridMonth" ? "active" : ""}
+            className={`px-3 py-1 text-sm rounded-lg border ${calendarView === "dayGridMonth" ? "bg-[#a8499c] text-white border-[#a8499c]" : "bg-white border-gray-200 text-gray-700"}`}
           >
             Month
           </button>
           <button
             onClick={() => handleViewChange("timeGridWeek")}
-            className={calendarView === "timeGridWeek" ? "active" : ""}
+            className={`px-3 py-1 text-sm rounded-lg border ${calendarView === "timeGridWeek" ? "bg-[#a8499c] text-white border-[#a8499c]" : "bg-white border-gray-200 text-gray-700"}`}
           >
             Week
           </button>
           <button
             onClick={() => handleViewChange("timeGridDay")}
-            className={calendarView === "timeGridDay" ? "active" : ""}
+            className={`px-3 py-1 text-sm rounded-lg border ${calendarView === "timeGridDay" ? "bg-[#a8499c] text-white border-[#a8499c]" : "bg-white border-gray-200 text-gray-700"}`}
           >
             Day
           </button>
         </div>
 
         {isLoading ? (
-          <div className="loading-state">
-            <div className="spinner"></div>
-            <p>Loading tasks...</p>
+          <div className="flex flex-col items-center justify-center h-64 bg-white rounded-lg shadow-sm">
+            <div className="w-10 h-10 border-4 border-[#a8499c] border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500">Loading tasks...</p>
           </div>
         ) : (
-          <div className="calendar-wrapper">
+          <div className="h-[calc(100vh-250px)] min-h-[500px] bg-white rounded-lg shadow-sm p-4">
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
               initialView={calendarView}
@@ -335,10 +318,10 @@ const UserCalendar = () => {
                   end: info.event.end,
                 });
               }}
-              height="auto"
+              height="100%"
               nowIndicator={true}
               businessHours={{
-                daysOfWeek: [1, 2, 3, 4, 5], // Monday to Friday
+                daysOfWeek: [1, 2, 3, 4, 5],
                 startTime: "08:30",
                 endTime: "16:45",
               }}
@@ -354,20 +337,20 @@ const UserCalendar = () => {
               eventDisplay="block"
               eventOrder="start"
               eventContent={(eventInfo) => (
-                <div className="fc-event-content">
-                  <div className="event-title">{eventInfo.event.title}</div>
-                  <div className="event-meta">
-                    <span className="event-hours">
+                <div className="p-1">
+                  <div className="font-medium text-sm text-white">
+                    {eventInfo.event.title}
+                  </div>
+                  <div className="flex justify-between text-xs text-white/90">
+                    <span className="truncate">
+                      {viewMode === "team-tasks" && eventInfo.event.extendedProps.personName}
+                    </span>
+                    <span className="ml-2 font-semibold">
                       {eventInfo.event.extendedProps.hours ||
                         eventInfo.event.extendedProps.approvedHours ||
                         1}
                       h
                     </span>
-                    {viewMode === "team-tasks" && (
-                      <span className="event-person">
-                        {eventInfo.event.extendedProps.personName}
-                      </span>
-                    )}
                   </div>
                 </div>
               )}
