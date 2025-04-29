@@ -14,9 +14,13 @@ export const useProjects = () => {
       setLoading(true);
       setError("");
       const response = await axios.get(API_URL);
-      console.log("API Response:", response); // Debug log
-      if (response.data && Array.isArray(response.data)) {
-        setProjects(response.data);
+      console.log("API Response data:", response.data);
+
+      const projectsData =
+        response.data.projects || response.data.data || response.data;
+
+      if (projectsData && Array.isArray(projectsData)) {
+        setProjects(projectsData);
       } else {
         throw new Error("Invalid data format received from API");
       }
