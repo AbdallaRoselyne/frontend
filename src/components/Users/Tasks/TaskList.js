@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FiSearch, FiRefreshCw } from "react-icons/fi";
 import { jwtDecode } from "jwt-decode";
 import TaskCard from "./TaskCard";
 
@@ -11,9 +12,9 @@ const TaskList = () => {
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    status: 'all',
-    search: '',
-    timeRange: 'all'
+    status: "all",
+    search: "",
+    timeRange: "all",
   });
 
   const getEmailFromToken = useCallback(() => {
@@ -92,17 +93,14 @@ const TaskList = () => {
 
   const handleStatusChange = async (taskId, newStatus) => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/tasks/${taskId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -121,93 +119,126 @@ const TaskList = () => {
   };
 
   return (
-    <div className="modern-task-container">
-      <header className="task-header">
-        <h1>My Tasks</h1>
-        <div className="header-controls">
-          <div className="stats-badge">
-            <span className="count">{filteredTasks.length}</span>
-            <span>tasks</span>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      {/* Main container with max-width */}
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h1 className="text-3xl font-bold text-gray-900">My Tasks</h1>
+
+            <div className="flex items-center gap-4">
+              <div className="bg-[#a8499c] bg-opacity-10 text-[#a8499c] px-4 py-2 rounded-full flex items-center gap-2">
+                <span className="font-bold text-lg">
+                  {filteredTasks.length}
+                </span>
+                <span className="text-sm">tasks</span>
+              </div>
+
+              <button
+                onClick={fetchTasks}
+                className="flex items-center gap-2 px-4 py-2 bg-[#c8db00] text-white rounded-lg hover:bg-[#b4c900] transition-colors shadow-sm"
+              >
+                <FiRefreshCw className="text-white" />
+                <span className="font-medium">Refresh</span>
+              </button>
+            </div>
           </div>
-          <button className="refresh-btn" onClick={fetchTasks}>
-            <svg width="16" height="16" viewBox="0 0 24 24">
-              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
-            </svg>
-            Refresh
-          </button>
-        </div>
-      </header>
 
-      <div className="filter-bar">
-        <div className="filter-group">
-          <select
-            value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="filter-select"
-          >
-            <option value="all">All Statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Approved">Approved</option>
-            <option value="Rejected">Rejected</option>
-          </select>
+          {/* Filter Bar */}
+          <div className="bg-white p-4 rounded-xl shadow-sm">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <select
+                  value={filters.status}
+                  onChange={(e) =>
+                    setFilters({ ...filters, status: e.target.value })
+                  }
+                  className="px-4 py-2 border border-[#818181] border-opacity-20 rounded-lg focus:ring-2 focus:ring-[#a8499c] focus:border-[#a8499c] outline-none bg-white text-gray-700"
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Approved">Approved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
 
-          <select
-            value={filters.timeRange}
-            onChange={(e) =>
-              setFilters({ ...filters, timeRange: e.target.value })
-            }
-            className="filter-select"
-          >
-            <option value="all">All Time</option>
-            <option value="week">This Week</option>
-            <option value="today">Today</option>
-          </select>
+                <select
+                  value={filters.timeRange}
+                  onChange={(e) =>
+                    setFilters({ ...filters, timeRange: e.target.value })
+                  }
+                  className="px-4 py-2 border border-[#818181] border-opacity-20 rounded-lg focus:ring-2 focus:ring-[#a8499c] focus:border-[#a8499c] outline-none bg-white text-gray-700"
+                >
+                  <option value="all">All Time</option>
+                  <option value="week">This Week</option>
+                  <option value="today">Today</option>
+                </select>
+              </div>
+
+              <div className="relative w-full md:w-72">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiSearch className="text-[#818181]" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search tasks, projects..."
+                  value={filters.search}
+                  onChange={(e) =>
+                    setFilters({ ...filters, search: e.target.value })
+                  }
+                  className="pl-10 pr-4 py-2 w-full border border-[#818181] border-opacity-20 rounded-lg focus:ring-2 focus:ring-[#a8499c] focus:border-[#a8499c] outline-none bg-white text-gray-700"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="search-box">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            className="search-icon"
-          >
-            <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search tasks, projects..."
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-          />
-        </div>
+        {/* Content Area */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a8499c] mb-4"></div>
+            <p className="text-[#818181]">Loading your tasks...</p>
+          </div>
+        ) : filteredTasks.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-xl shadow-sm">
+            <div className="bg-[#818181] bg-opacity-10 p-8 rounded-full mb-6">
+              <svg
+                className="w-16 h-16 text-[#818181]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                ></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">
+              {tasks.length === 0
+                ? "No tasks assigned yet"
+                : "No tasks match your filters"}
+            </h3>
+            <p className="text-[#818181] max-w-md">
+              {tasks.length === 0
+                ? "When you get assigned tasks, they'll appear here"
+                : "Try adjusting your filters to see more results"}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
+            {filteredTasks.map((task) => (
+              <TaskCard
+                key={task._id}
+                task={task}
+                onStatusChange={handleStatusChange}
+              />
+            ))}
+          </div>
+        )}
       </div>
-
-      {loading ? (
-        <div className="loading-state">
-          <div className="spinner"></div>
-          <p>Loading your tasks...</p>
-        </div>
-      ) : filteredTasks.length === 0 ? (
-        <div className="empty-state">
-          <img src="/illustration-empty.svg" alt="No tasks" />
-          <h3>
-            {tasks.length === 0
-              ? "No tasks assigned yet"
-              : "No tasks match your filters"}
-          </h3>
-          <p>When you get assigned tasks, they'll appear here</p>
-        </div>
-      ) : (
-        <div className="task-board">
-          {filteredTasks.map((task) => (
-            <TaskCard
-              key={task._id}
-              task={task}
-              onStatusChange={handleStatusChange}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 };
