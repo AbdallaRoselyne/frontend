@@ -10,14 +10,16 @@ const MemberFormModal = ({
   error, 
   setError 
 }) => {
-  const [formData, setFormData] = useState(member || {
+  const initialFormData = {
     name: "",
     email: "",
     jobTitle: "",
     discipline: "",
     department: "",
     billableRate: "",
-  });
+  };
+
+  const [formData, setFormData] = useState(member || initialFormData);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,6 +41,7 @@ const MemberFormModal = ({
     const payload = {
       ...formData,
       billableRate: Number(formData.billableRate),
+      department: formData.department.toUpperCase() // Ensure department is uppercase
     };
 
     try {
@@ -140,10 +143,10 @@ const MemberFormModal = ({
                 required
               >
                 <option value="">Select</option>
-                <option>BIM</option>
-                <option>LEED</option>
-                <option>MEP</option>
-                <option>ADMIN</option>
+                <option value="BIM">BIM</option>
+                <option value="LEED">LEED</option>
+                <option value="MEP">MEP</option>
+                <option value="ADMIN">ADMIN</option>
               </select>
             </div>
           </div>
