@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { FiX } from "react-icons/fi";
 
 const MemberFormModal = ({ 
@@ -10,16 +10,27 @@ const MemberFormModal = ({
   error, 
   setError 
 }) => {
-  const initialFormData = {
+  const initialFormData = useMemo(() => ({
     name: "",
     email: "",
     jobTitle: "",
     discipline: "",
     department: "",
     billableRate: "",
-  };
+  }), []);
 
-  const [formData, setFormData] = useState(member || initialFormData);
+  const [formData, setFormData] = useState(initialFormData);
+
+  const resetForm = useCallback(() => {
+    setFormData(member || initialFormData);
+    setError(null);
+  }, [member, initialFormData, setError]);
+
+  useEffect(() => {
+    if (show) {
+      resetForm();
+    }
+  }, [show, resetForm]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,7 +52,7 @@ const MemberFormModal = ({
     const payload = {
       ...formData,
       billableRate: Number(formData.billableRate),
-      department: formData.department.toUpperCase() // Ensure department is uppercase
+      department: formData.department.toUpperCase()
     };
 
     try {
@@ -76,6 +87,7 @@ const MemberFormModal = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-md">
+
         <div className="flex justify-between items-center border-b p-4">
           <h2 className="text-xl font-semibold text-gray-800">
             {mode === "add" ? "Add New Member" : "Edit Member"}

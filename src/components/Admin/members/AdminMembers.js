@@ -162,7 +162,7 @@ const AdminMembers = () => {
                     </div>
                     <div className="flex items-center text-gray-600">
                       <span className="font-medium w-24">Rate:</span>
-                      <span>{member.billableRate || "0"}/hr</span>
+                      <span>${member.billableRate || "0"}/hr</span>
                     </div>
                   </div>
                   
@@ -203,7 +203,10 @@ const AdminMembers = () => {
       {/* Modals */}
       <MemberFormModal
         show={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => {
+          setShowModal(false);
+          setError(null);
+        }}
         onSave={(newMember) => {
           setMembers([...members, newMember]);
           setShowModal(false);
@@ -216,10 +219,15 @@ const AdminMembers = () => {
       {selectedMember && (
         <MemberFormModal
           show={editModal}
-          onClose={() => setEditModal(false)}
+          onClose={() => {
+            setEditModal(false);
+            setSelectedMember(null);
+            setError(null);
+          }}
           onSave={(updatedMember) => {
             setMembers(members.map(m => m._id === updatedMember._id ? updatedMember : m));
             setEditModal(false);
+            setSelectedMember(null);
           }}
           member={selectedMember}
           mode="edit"
