@@ -12,7 +12,7 @@ import AdminSidebar from "./components/Admin/Adminsidebar";
 import LandingPage from "./components/LandingPage";
 import UserDashboard from "./components/Users/UserCalendar/UserCalendar";
 import RequestsPage from "./components/Users/requests/RequestsPage";
-import AdminMembers from "./components/Admin/adminMembers";
+import AdminMembers from "./components/Admin/members/AdminMembers";
 import AdminCalendar from "./components/Admin/calendar/CalendarPage";
 import BudgetTracking from "./components/Admin/Budget/BudgetTracking";
 import AdminApprove from "./components/Admin/AdminApprove";
