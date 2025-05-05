@@ -162,7 +162,7 @@ const AdminMembers = () => {
                     </div>
                     <div className="flex items-center text-gray-600">
                       <span className="font-medium w-24">Rate:</span>
-                      <span>${member.billableRate || "0"}/hr</span>
+                      <span>{member.billableRate || "0"}/hr</span>
                     </div>
                   </div>
                   
