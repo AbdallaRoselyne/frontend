@@ -1,12 +1,17 @@
-export const departments = ["LEED", "BIM", "MEP", "Architecture", "Structural"];
+export const departments = ["LEED", "BIM", "MEP", "ADMIN"];
 
 export const stages = [
-  "Preparation",
+  "Preparation and Brief",
+  "Survey",
   "Concept Design",
-  "Development",
+  "Detailed Design",
+  "Final EA Report",
   "Technical Design",
   "Construction",
-  "Completion"
+  "Handover and Close Out",
+  "Completed",
+  "Cancelled",
+  "On Hold",
 ];
 
 export const projectFields = [
