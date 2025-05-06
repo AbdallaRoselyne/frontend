@@ -25,7 +25,7 @@ const CalendarToolbar = ({ events, view, setView, onNavigate }) => {
       <div className="flex items-center space-x-2">
         <button
           onClick={() => onNavigate("PREV")}
-          className="p-2 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-800"
+          className="p-2 rounded-md hover:bg-[#f0f0f0] text-[#818181] hover:text-[#a8499c]"
           aria-label="Previous"
         >
           <svg
@@ -46,14 +46,14 @@ const CalendarToolbar = ({ events, view, setView, onNavigate }) => {
 
         <button
           onClick={() => onNavigate("TODAY")}
-          className="px-3 py-1.5 text-sm rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700"
+          className="px-3 py-1.5 text-sm rounded-md bg-[#f0f0f0] hover:bg-[#e0e0e0] text-[#818181]"
         >
           Today
         </button>
 
         <button
           onClick={() => onNavigate("NEXT")}
-          className="p-2 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-800"
+          className="p-2 rounded-md hover:bg-[#f0f0f0] text-[#818181] hover:text-[#a8499c]"
           aria-label="Next"
         >
           <svg
@@ -73,15 +73,15 @@ const CalendarToolbar = ({ events, view, setView, onNavigate }) => {
         </button>
       </div>
 
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      <div className="flex space-x-1 bg-[#f0f0f0] p-1 rounded-lg">
         {views.map((v) => (
           <button
             key={v.value}
             onClick={() => setView(v.value)}
             className={`px-3 py-1.5 rounded-md flex items-center ${
               view === v.value
-                ? "bg-white shadow text-purple-600"
-                : "text-gray-600 hover:text-gray-800"
+                ? "bg-white shadow text-[#a8499c]"
+                : "text-[#818181] hover:text-[#a8499c]"
             }`}
           >
             <svg
@@ -106,7 +106,7 @@ const CalendarToolbar = ({ events, view, setView, onNavigate }) => {
       <div className="flex space-x-2">
         <button
           onClick={() => exportToCSV(events)}
-          className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors font-medium flex items-center"
+          className="bg-[#818181] hover:bg-[#6a6a6a] text-white px-4 py-2 rounded-lg transition-colors font-medium flex items-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -124,8 +124,6 @@ const CalendarToolbar = ({ events, view, setView, onNavigate }) => {
           </svg>
           Export
         </button>
-
-        
       </div>
     </div>
   );
