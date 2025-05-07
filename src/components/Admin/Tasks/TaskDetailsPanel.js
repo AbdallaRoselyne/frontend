@@ -23,6 +23,7 @@ const TaskDetailsPanel = ({
   handleReject,
   handleUpdateTask,
   handleDeleteDate,
+  resetForm,
 }) => {
   useEffect(() => {
     if (selectedTask?.status === "Approved" && selectedTask.weekHours) {
@@ -40,79 +41,103 @@ const TaskDetailsPanel = ({
   if (!selectedTask) return null;
 
   return (
-    <div className="bg-white p-6 shadow rounded-lg mb-6">
+    <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl overflow-y-auto max-h-[90vh]">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">
-          Task Details:{" "}
-          <span className="text-[#3b0764]">{selectedTask.Task}</span>
+        <h2 className="text-xl font-bold text-[#a8499c]">
+          Task Details: {selectedTask.Task || ""}
         </h2>
         <button
-          onClick={() => setSelectedTask(null)}
-          className="text-gray-500 hover:text-gray-700"
+          onClick={resetForm}
+          className="text-gray-500 hover:text-gray-700 p-1"
         >
           <FiX size={24} />
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="font-semibold">Name:</label>
+          <label className="block font-medium text-gray-700 mb-1">Name:</label>
           <p>{selectedTask.requestedName}</p>
         </div>
         <div>
-          <label className="font-semibold">Email:</label>
-          <p>{selectedTask.email}</p>
+          <label className="block font-medium text-gray-700 mb-1">Email:</label>
+          <p>{selectedTask.email || "-"}</p>
         </div>
         <div>
-          <label className="font-semibold">Project:</label>
+          <label className="block font-medium text-gray-700 mb-1">
+            Project:
+          </label>
           <p>{selectedTask.project}</p>
         </div>
         <div>
-          <label className="font-semibold">Hours Requested:</label>
+          <label className="block font-medium text-gray-700 mb-1">
+            Hours Requested:
+          </label>
           <p>{selectedTask.hours}</p>
         </div>
         <div>
-          <label className="font-semibold">Department:</label>
+          <label className="block font-medium text-gray-700 mb-1">
+            Department:
+          </label>
           <p>{selectedTask.department}</p>
         </div>
         <div>
-          <label className="font-semibold">Requester:</label>
-          <p>{selectedTask.requester}</p>
+          <label className="block font-medium text-gray-700 mb-1">
+            Requester:
+          </label>
+          <p>{selectedTask.requester || "-"}</p>
         </div>
         <div>
-          <label className="font-semibold">Notes:</label>
-          <p>{selectedTask.Notes}</p>
+          <label className="block font-medium text-gray-700 mb-1">Notes:</label>
+          <p>{selectedTask.Notes || "-"}</p>
         </div>
         <div>
-          <label className="font-semibold">Status:</label>
-          <p>{selectedTask.status}</p>
+          <label className="block font-medium text-gray-700 mb-1">
+            Status:
+          </label>
+          <p
+            className={`inline-block px-2 py-1 rounded ${
+              selectedTask.status === "Approved"
+                ? "bg-green-100 text-green-800"
+                : selectedTask.status === "Rejected"
+                ? "bg-red-100 text-red-800"
+                : "bg-yellow-100 text-yellow-800"
+            }`}
+          >
+            {selectedTask.status}
+          </p>
         </div>
       </div>
 
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-4">
+      <div className="mb-6">
+        <h3 className="text-lg font-semibold mb-4 text-[#a8499c]">
           {selectedTask.status === "Approved"
-            ? "Edit Approved Task"
+            ? "Schedule Task Hours"
             : "Approve/Reject Task"}
         </h3>
-        <div className="flex flex-col gap-4 min-h-[200px]">
+
+        <div className="space-y-4">
           {weekHours.map((day, index) => (
             <div
               key={`${day.day}-${index}`}
-              className="flex items-center gap-4 group"
+              className="flex flex-col md:flex-row gap-4"
             >
               <div className="flex-1">
-                <label className="font-semibold">{day.day}:</label>
+                <label className="block font-medium text-gray-700 mb-1">
+                  {day.day}:
+                </label>
                 <DateTimePicker
                   onChange={(date) => handleDateChange(index, date)}
                   value={day.date}
                   format="yyyy-MM-dd"
-                  className="w-full p-2 border rounded"
+                  className="w-full p-2 border border-gray-300 rounded"
                   disabled={selectedTask.status === "Approved" && day.date}
                 />
               </div>
               <div className="flex-1">
-                <label className="font-semibold">Hours:</label>
+                <label className="block font-medium text-gray-700 mb-1">
+                  Hours:
+                </label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -122,18 +147,14 @@ const TaskDetailsPanel = ({
                     onChange={(e) =>
                       handleHoursChange(index, Number(e.target.value))
                     }
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border border-gray-300 rounded"
                   />
                   {selectedTask.status === "Approved" && day.date && (
                     <button
-                      onClick={() => {
-                        // Ensure we're passing a Date object
-                        const dateToDelete =
-                          day.date instanceof Date
-                            ? day.date
-                            : new Date(day.date);
-                        handleDeleteDate(dateToDelete);
-                      }}
+                      type="button"
+                      onClick={() =>
+                        handleDeleteDate(selectedTask._id, day.date)
+                      }
                       className="text-red-500 hover:text-red-700 p-2"
                       title="Delete this date"
                     >
@@ -144,55 +165,63 @@ const TaskDetailsPanel = ({
               </div>
             </div>
           ))}
-
-          {(selectedTask.status === "Rejected" ||
-            selectedTask.status === "Pending") && (
-            <div>
-              <label className="font-semibold">Comment (for rejection):</label>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="w-full p-2 border rounded"
-                rows="3"
-                required
-              />
-            </div>
-          )}
-
-          <div className="flex gap-4">
-            {selectedTask.status === "Pending" ? (
-              <>
-                <button
-                  onClick={handleApprove}
-                  className="bg-[#3b0764] text-white px-4 py-2 rounded hover:bg-green-600"
-                >
-                  <FiCheckCircle /> Approve
-                </button>
-                <button
-                  onClick={handleReject}
-                  className="bg-[#bef264] text- px-4 py-2 rounded hover:bg-red-600"
-                >
-                  <FiXCircle /> Reject
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={handleUpdateTask}
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                  <FiEdit /> Update
-                </button>
-                <button
-                  onClick={() => setSelectedTask(null)}
-                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                >
-                  <FiX /> Close
-                </button>
-              </>
-            )}
-          </div>
         </div>
+
+        {(selectedTask.status === "Rejected" ||
+          selectedTask.status === "Pending") && (
+          <div className="mt-4">
+            <label className="block font-medium text-gray-700 mb-1">
+              {selectedTask.status === "Rejected"
+                ? "Rejection Reason"
+                : "Comment (for rejection):"}
+            </label>
+            <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              rows="3"
+              required={selectedTask.status === "Pending"}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-wrap gap-3">
+        {selectedTask.status === "Pending" ? (
+          <>
+            <button
+              type="button"
+              onClick={() => handleApprove(selectedTask._id)}
+              className="bg-[#c8db00] text-gray-800 px-4 py-2 rounded hover:bg-[#b0c200] flex items-center gap-2"
+            >
+              <FiCheckCircle /> Approve
+            </button>
+            <button
+              type="button"
+              onClick={() => handleReject(selectedTask._id)}
+              className="bg-[#818181] text-white px-4 py-2 rounded hover:bg-[#6a6a6a] flex items-center gap-2"
+            >
+              <FiXCircle /> Reject
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => handleUpdateTask(selectedTask._id)}
+              className="bg-[#a8499c] text-white px-4 py-2 rounded hover:bg-[#8a3a7d] flex items-center gap-2"
+            >
+              <FiEdit /> Update
+            </button>
+            <button
+              type="button"
+              onClick={resetForm}
+              className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 flex items-center gap-2"
+            >
+              <FiX /> Close
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

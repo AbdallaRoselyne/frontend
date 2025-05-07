@@ -1,18 +1,31 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
-export const useTaskApprovalLogic = () => {
+export const useTaskManagement = () => {
   const [selectedTask, setSelectedTask] = useState(null);
-  const [weekHours, setWeekHours] = useState([
-    { day: "Monday", date: null, hours: 0 },
-    { day: "Tuesday", date: null, hours: 0 },
-    { day: "Wednesday", date: null, hours: 0 },
-    { day: "Thursday", date: null, hours: 0 },
-    { day: "Friday", date: null, hours: 0 },
-  ]);
+  const [weekHours, setWeekHours] = useState(
+    ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => ({
+      day,
+      date: null,
+      hours: 0,
+    }))
+  );
   const [comment, setComment] = useState("");
+  const [activeTab, setActiveTab] = useState("pending");
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+  const resetForm = () => {
+    setWeekHours(
+      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => ({
+        day,
+        date: null,
+        hours: 0,
+      }))
+    );
+    setComment("");
+    setSelectedTask(null);
+  };
 
   const handleDateChange = (index, date) => {
     const newWeekHours = [...weekHours];
@@ -21,110 +34,87 @@ export const useTaskApprovalLogic = () => {
   };
 
   const handleHoursChange = (index, hours) => {
-    const newWeekHours = [...weekHours];
     if (hours > 8) {
-      toast.error("Maximum 8 hours allowed per day.");
+      toast.error("Maximum 8 hours allowed per day");
       return;
     }
+    const newWeekHours = [...weekHours];
     newWeekHours[index].hours = hours;
     setWeekHours(newWeekHours);
   };
 
   const validateWeekHours = () => {
-    const filledWeekHours = weekHours.filter(
-      (day) => day.date !== null && day.hours > 0
-    );
+    const filledDays = weekHours.filter((day) => day.date && day.hours > 0);
 
-    if (filledWeekHours.length === 0) {
-      toast.error("At least one day must be filled.");
+    if (filledDays.length === 0) {
+      toast.error("At least one day must be filled");
       return false;
     }
 
-    const totalHours = filledWeekHours.reduce((sum, day) => sum + day.hours, 0);
+    const totalHours = filledDays.reduce((sum, day) => sum + day.hours, 0);
     if (totalHours > 40) {
-      toast.error("Maximum 40 hours allowed per week.");
+      toast.error("Maximum 40 hours allowed per week");
       return false;
     }
 
     return true;
   };
 
-  const resetWeekHours = () => {
-    setWeekHours([
-      { day: "Monday", date: null, hours: 0 },
-      { day: "Tuesday", date: null, hours: 0 },
-      { day: "Wednesday", date: null, hours: 0 },
-      { day: "Thursday", date: null, hours: 0 },
-      { day: "Friday", date: null, hours: 0 },
-    ]);
-  };
+  const handleDeleteDate = async (taskId, date) => {
+    if (!taskId || !date) {
+      toast.error("Missing task or date information");
+      return false;
+    }
 
-  const handleDeleteDate = async (date) => {
-    if (!selectedTask) return toast.error("No task selected");
-  
     try {
-      const dateObj = date instanceof Date ? date : new Date(date);
-      if (isNaN(dateObj.getTime())) {
-        throw new Error("Invalid date format");
-      }
-  
-      const taskId = selectedTask._id.split("-")[0];
-      const dateString = dateObj.toISOString().split('T')[0];
-  
+      // Extract the original MongoDB ID (first 24 characters)
+      const cleanTaskId = taskId.length > 24 ? taskId.substring(0, 24) : taskId;
+      const dateStr = new Date(date).toISOString().split("T")[0];
+
       const response = await fetch(
-        `${API_BASE_URL}/api/tasks/${taskId}?date=${dateString}`,
+        `${API_BASE_URL}/api/tasks/${cleanTaskId}?date=${dateStr}`,
         { method: "DELETE" }
       );
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to delete date");
       }
-  
+
       const result = await response.json();
-      
+
       if (result.deleted) {
-        setSelectedTask(null);
         toast.success("Task deleted (no remaining dates)");
+        return { deleted: true };
       } else {
-        const updatedTask = {
-          ...result.task,
-          weekHours: result.task.weekHours,
-          _id: selectedTask._id
-        };
-        
-        setSelectedTask(updatedTask);
-        
-        const remainingWeekHours = weekHours.filter(
-          wh => !wh.date || new Date(wh.date).toISOString().split('T')[0] !== dateString
-        );
-        setWeekHours(remainingWeekHours);
-        
         toast.success("Date deleted successfully");
+        return { deleted: false, task: result.task };
       }
     } catch (error) {
-      console.error("Delete error details:", error);
+      console.error("Delete error:", error);
       toast.error(`Failed to delete date: ${error.message}`);
+      return false;
     }
   };
-  
-  const handleApprove = async (
-    selectedTask,
-    approvedTasks,
-    setApprovedTasks,
-    taskRequests,
-    setTaskRequests
-  ) => {
-    if (!selectedTask) return toast.error("Select a task first!");
-    if (!validateWeekHours()) return;
+
+  const handleApprove = async (taskId) => {
+    if (!taskId) {
+      toast.error("No task selected for approval");
+      return null;
+    }
+    if (!validateWeekHours()) return null;
 
     try {
-      const filledWeekHours = weekHours.filter(
-        (day) => day.date !== null && day.hours > 0
-      );
+      const filledWeekHours = weekHours
+        .filter((day) => day.date && day.hours > 0)
+        .map((day) => ({
+          day: day.day,
+          date: day.date.toISOString(),
+          hours: day.hours,
+        }));
 
       const response = await fetch(
-        `${API_BASE_URL}/api/requests/${selectedTask._id}/approve`,
+        `${API_BASE_URL}/api/requests/${taskId}/approve`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -135,32 +125,29 @@ export const useTaskApprovalLogic = () => {
       if (!response.ok) throw new Error("Failed to approve task");
 
       const approvedTask = await response.json();
-      setApprovedTasks([...approvedTasks, approvedTask.task]);
-      setTaskRequests(
-        taskRequests.filter((task) => task._id !== selectedTask._id)
-      );
-      setSelectedTask(null);
-      resetWeekHours();
-      toast.success("Task approved!");
+      toast.success("Task approved successfully!");
+      resetForm();
+      return approvedTask;
     } catch (error) {
       console.error("Error approving task:", error);
-      toast.error("Failed to approve task");
+      toast.error(`Failed to approve task: ${error.message}`);
+      return null;
     }
   };
 
-  const handleReject = async (
-    selectedTask,
-    rejectedTasks,
-    setRejectedTasks,
-    taskRequests,
-    setTaskRequests
-  ) => {
-    if (!selectedTask) return toast.error("Select a task first!");
-    if (!comment) return toast.error("Please provide a reason for rejection.");
+  const handleReject = async (taskId) => {
+    if (!taskId) {
+      toast.error("No task selected for rejection");
+      return null;
+    }
+    if (!comment) {
+      toast.error("Please provide a reason for rejection");
+      return null;
+    }
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}/api/requests/${selectedTask._id}/reject`,
+        `${API_BASE_URL}/api/requests/${taskId}/reject`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -171,87 +158,57 @@ export const useTaskApprovalLogic = () => {
       if (!response.ok) throw new Error("Failed to reject task");
 
       const rejectedTask = await response.json();
-      setRejectedTasks([...rejectedTasks, rejectedTask.task]);
-      setTaskRequests(
-        taskRequests.filter((task) => task._id !== selectedTask._id)
-      );
-      setSelectedTask(null);
-      setComment("");
-      toast.warning("Task rejected!");
+      toast.success("Task rejected successfully!");
+      resetForm();
+      return rejectedTask;
     } catch (error) {
       console.error("Error rejecting task:", error);
-      toast.error("Failed to reject task");
+      toast.error(`Failed to reject task: ${error.message}`);
+      return null;
     }
   };
 
-  const handleUpdateTask = async (
-    selectedTask,
-    setApprovedTasks,
-    setRejectedTasks
-  ) => {
-    if (!selectedTask) return toast.error("Select a task first!");
-    if (!validateWeekHours()) return;
+  const handleUpdateTask = async (taskId) => {
+    if (!taskId) {
+      toast.error("No task selected for update");
+      return null;
+    }
+    if (!validateWeekHours()) return null;
 
     try {
       const filledWeekHours = weekHours
         .filter((day) => day.date && day.hours > 0)
-        .map((day) => {
-          const date = day.date instanceof Date ? day.date : new Date(day.date);
-          if (isNaN(date.getTime())) {
-            throw new Error(`Invalid date for ${day.day}`);
-          }
-          return {
-            day: day.day,
-            date: date.toISOString(),
-            hours: day.hours,
-          };
-        });
+        .map((day) => ({
+          day: day.day,
+          date:
+            day.date instanceof Date
+              ? day.date.toISOString()
+              : new Date(day.date).toISOString(),
+          hours: day.hours,
+        }));
 
-      const taskId = selectedTask._id.split("-")[0];
-      const updateData = {
-        ...selectedTask,
-        weekHours: filledWeekHours,
-      };
+      // Clean the task ID
+      const cleanTaskId = taskId.length > 24 ? taskId.substring(0, 24) : taskId;
 
-      delete updateData._reactInternalFiber;
-      delete updateData._reactFragment;
+      const response = await fetch(`${API_BASE_URL}/api/tasks/${cleanTaskId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...selectedTask,
+          weekHours: filledWeekHours,
+        }),
+      });
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/tasks/${taskId}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updateData),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to update task");
-      }
+      if (!response.ok) throw new Error("Failed to update task");
 
       const updatedTask = await response.json();
-
-      if (updatedTask.status === "Approved") {
-        setApprovedTasks((prev) =>
-          prev.map((task) =>
-            task._id.split("-")[0] === taskId ? updatedTask : task
-          )
-        );
-      } else if (updatedTask.status === "Rejected") {
-        setRejectedTasks((prev) =>
-          prev.map((task) =>
-            task._id.split("-")[0] === taskId ? updatedTask : task
-          )
-        );
-      }
-
-      setSelectedTask(null);
-      resetWeekHours();
       toast.success("Task updated successfully!");
+      resetForm();
+      return updatedTask;
     } catch (error) {
-      console.error("Update error details:", error);
+      console.error("Error updating task:", error);
       toast.error(`Failed to update task: ${error.message}`);
+      return null;
     }
   };
 
@@ -262,11 +219,14 @@ export const useTaskApprovalLogic = () => {
     setWeekHours,
     comment,
     setComment,
+    activeTab,
+    setActiveTab,
     handleDateChange,
     handleHoursChange,
+    handleDeleteDate,
     handleApprove,
     handleReject,
     handleUpdateTask,
-    handleDeleteDate,
+    resetForm,
   };
 };

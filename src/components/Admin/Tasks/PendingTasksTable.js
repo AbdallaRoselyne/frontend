@@ -1,5 +1,6 @@
 import React from "react";
 import { FiEdit, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import StatusBadge from "./StatusBadge";
 
 const PendingTasksTable = ({ tasks, setSelectedTask }) => {
   const [expandedTask, setExpandedTask] = React.useState(null);
@@ -34,10 +35,18 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
     });
   }, [tasks, sortConfig]);
 
+  if (tasks.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6 text-center text-gray-500">
+        No pending task requests
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-4 border-b border-gray-100">
-        <h2 className="text-xl font-semibold text-gray-800">Pending Task Requests</h2>
+      <div className="p-4 border-b border-gray-100 bg-[#f8f9fa]">
+        <h2 className="text-xl font-semibold text-[#a8499c]">Pending Task Requests</h2>
         <p className="text-sm text-gray-500 mt-1">{tasks.length} pending requests</p>
       </div>
       
@@ -93,7 +102,7 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                     {task.department}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {task.requester}
+                    {task.requester || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={task.status} />
@@ -101,9 +110,9 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => setSelectedTask(task)}
-                      className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 bg-indigo-50 px-3 py-1 rounded-md hover:bg-indigo-100 transition-colors"
+                      className="text-[#a8499c] hover:text-[#8a3a7d] flex items-center gap-1 bg-[#f3e6f1] px-3 py-1 rounded-md hover:bg-[#e8d4e6] transition-colors"
                     >
-                      <FiEdit size={14} /> Edit
+                      <FiEdit size={14} /> Review
                     </button>
                   </td>
                 </tr>
@@ -153,7 +162,7 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Requester</p>
-                    <p className="text-sm">{task.requester}</p>
+                    <p className="text-sm">{task.requester || '-'}</p>
                   </div>
                 </div>
                 <div>
@@ -162,9 +171,9 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                 </div>
                 <button
                   onClick={() => setSelectedTask(task)}
-                  className="w-full mt-2 text-indigo-600 hover:text-indigo-900 flex items-center justify-center gap-1 bg-indigo-50 px-3 py-2 rounded-md hover:bg-indigo-100 transition-colors"
+                  className="w-full mt-2 text-[#a8499c] hover:text-[#8a3a7d] flex items-center justify-center gap-1 bg-[#f3e6f1] px-3 py-2 rounded-md hover:bg-[#e8d4e6] transition-colors"
                 >
-                  <FiEdit size={14} /> Edit Task
+                  <FiEdit size={14} /> Review Task
                 </button>
               </div>
             )}
@@ -174,19 +183,5 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
     </div>
   );
 };
-
-const StatusBadge = ({ status }) => (
-  <span
-    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-      status === "Pending"
-        ? "bg-yellow-100 text-yellow-800"
-        : status === "Approved"
-        ? "bg-green-100 text-green-800"
-        : "bg-red-100 text-red-800"
-    }`}
-  >
-    {status}
-  </span>
-);
 
 export default PendingTasksTable;

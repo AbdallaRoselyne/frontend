@@ -1,41 +1,47 @@
 import React from "react";
-import { FiFilter } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 
 const FiltersPanel = ({ filters, setFilters }) => (
-  <div className="bg-white p-6 shadow rounded-lg mb-6">
-    <h2 className="text-lg font-semibold mb-4">Filters</h2>
-    <div className="flex gap-4">
-      <input
-        type="text"
-        placeholder="Filter by Assignee"
-        value={filters.requestedName}
-        onChange={(e) =>
-          setFilters({ ...filters, requestedName: e.target.value })
-        }
-        className="border p-2 rounded"
-      />
-      <input
-        type="text"
-        placeholder="Filter by Project"
-        value={filters.project}
-        onChange={(e) =>
-          setFilters({ ...filters, project: e.target.value })
-        }
-        className="border p-2 rounded"
-      />
-      <input
-        type="date"
-        value={filters.date}
-        onChange={(e) => setFilters({ ...filters, date: e.target.value })}
-        className="border p-2 rounded"
-      />
+  <div className="bg-white p-4 rounded-lg shadow border border-gray-200 mb-6">
+    <div className="flex flex-wrap gap-4 items-end">
+      <div className="flex-1 min-w-[200px]">
+        <label className="block text-sm font-medium mb-1 text-gray-700">Filter by Assignee</label>
+        <input
+          type="text"
+          placeholder="Search assignees..."
+          value={filters.requestedName}
+          onChange={(e) => setFilters({ ...filters, requestedName: e.target.value })}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <div className="flex-1 min-w-[200px]">
+        <label className="block text-sm font-medium mb-1 text-gray-700">Filter by Project</label>
+        <input
+          type="text"
+          placeholder="Search projects..."
+          value={filters.project}
+          onChange={(e) => setFilters({ ...filters, project: e.target.value })}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+      </div>
+      <div className="flex-1 min-w-[200px]">
+        <label className="block text-sm font-medium mb-1 text-gray-700">Filter by Date</label>
+        <input
+          type="date"
+          value={filters.date}
+          onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
+      </div>
       <button
-        onClick={() =>
-          setFilters({ requestedName: "", project: "", date: "" })
-        }
-        className="bg-[#3b0764] text-white px-4 py-2 rounded hover:bg-[#4c0a86]"
+        onClick={() => setFilters({
+          requestedName: "",
+          project: "",
+          date: ""
+        })}
+        className="bg-[#818181] text-white px-4 py-2 rounded hover:bg-[#6a6a6a] flex items-center gap-2"
       >
-        <FiFilter /> Clear Filters
+        <FiX /> Clear Filters
       </button>
     </div>
   </div>

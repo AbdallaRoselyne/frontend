@@ -15,7 +15,7 @@ const Sidebar = () => {
 
   const navItems = [
     { id: "dashboard", icon: <FiHome />, label: "Dashboard", href: "/dashboard" },
-    { id: "members", icon: <FiUserPlus />, label: "Request Member", href: "/members" },
+    { id: "members", icon: <FiUserPlus />, label: "Request Resource", href: "/members" },
     { id: "tasks", icon: <FiCheckCircle />, label: "Assigned Tasks", href: "/tasks" },
     { id: "timesheet", icon: <FiClock />, label: "Time Sheet", href: "/timesheet" },
   ];
