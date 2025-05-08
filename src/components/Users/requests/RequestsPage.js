@@ -25,6 +25,7 @@ const RequestsPage = () => {
     requester: "",
     Task: "",
     Notes: "",
+    isCustomProject: false,
   });
 
   useEffect(() => {
@@ -66,11 +67,16 @@ const RequestsPage = () => {
   };
 
   const handleChange = (e) => {
-    setRequestData({ ...requestData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setRequestData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       if (editMode) {
         const response = await axios.put(
@@ -83,20 +89,46 @@ const RequestsPage = () => {
           )
         );
       } else {
-        const response = await axios.post(
-          `${API_BASE_URL}/api/requests`,
-          requestData
-        );
-        setRequestedMembers([...requestedMembers, response.data]);
+        const memberNames = requestData.requestedName.split(/\s*,\s*/);
+        const memberEmails = requestData.email.split(/\s*,\s*/);
+
+        const createRequests = memberNames.map((name, index) => {
+          const memberData = {
+            ...requestData,
+            requestedName: name,
+            email: memberEmails[index] || "",
+            project: requestData.isCustomProject
+              ? requestData.project
+              : requestData.project,
+            projectCode: requestData.isCustomProject
+              ? ""
+              : requestData.projectCode,
+            department: requestData.isCustomProject
+              ? requestData.department
+              : requestData.department,
+            isCustomProject: requestData.isCustomProject || false,
+          };
+
+          return axios.post(`${API_BASE_URL}/api/requests`, memberData);
+        });
+
+        const responses = await Promise.all(createRequests);
+        const newRequests = responses.map((res) => res.data);
+
+        setRequestedMembers([...requestedMembers, ...newRequests]);
       }
       resetForm();
     } catch (error) {
       console.error("Error submitting request:", error);
+      alert("Error submitting request. Please check all required fields.");
     }
   };
 
   const handleEdit = (request) => {
-    setRequestData(request);
+    setRequestData({
+      ...request,
+      isCustomProject: request.isCustomProject || false,
+    });
     setEditId(request._id);
     setEditMode(true);
     setShowModal(true);
@@ -124,6 +156,7 @@ const RequestsPage = () => {
       requester: "",
       Task: "",
       Notes: "",
+      isCustomProject: false,
     });
     setEditMode(false);
     setEditId(null);
@@ -143,22 +176,24 @@ const RequestsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#818181]/5 py-6 px-4 sm:px-6 lg:px-8">
-    <div className="max-w-7xl mx-auto">
-      <div className="sm:flex sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold leading-tight text-gray-900">Resource Requests</h1>
-          <p className="mt-2 text-sm text-[#818181]">
-            Manage all your team resource requests in one place
-          </p>
+      <div className="max-w-7xl mx-auto">
+        <div className="sm:flex sm:items-center sm:justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold leading-tight text-gray-900">
+              Resource Requests
+            </h1>
+            <p className="mt-2 text-sm text-[#818181]">
+              Manage all your team resource requests in one place
+            </p>
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#a8499c] hover:bg-[#8d3a82] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#a8499c]/50 transition-colors"
+          >
+            <FiUserPlus className="-ml-1 mr-2 h-5 w-5" />
+            New Request
+          </button>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#a8499c] hover:bg-[#8d3a82] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#a8499c]/50 transition-colors"
-        >
-          <FiUserPlus className="-ml-1 mr-2 h-5 w-5" />
-          New Request
-        </button>
-      </div>
 
         <RequestsTable
           filteredMembers={filteredMembers}

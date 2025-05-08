@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { FiUsers, FiClipboard, FiDollarSign, FiCalendar, FiMenu, FiX, FiClock } from "react-icons/fi";
+import {
+  FiUsers,
+  FiClipboard,
+  FiDollarSign,
+  FiCalendar,
+  FiMenu,
+  FiX,
+  FiClock,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
 
 const AdminSidebar = () => {
@@ -29,7 +37,9 @@ const AdminSidebar = () => {
       {/* Mobile menu button */}
       <button
         onClick={toggleSidebar}
-        className={`md:hidden fixed top-4 left-4 z-50 p-2 rounded-md ${isOpen ? 'bg-[#a8499c]' : 'bg-[#a8499c]'} text-white shadow-md hover:bg-[#8f3a8a] transition-colors`}
+        className={`md:hidden fixed top-4 left-4 z-50 p-2 rounded-md ${
+          isOpen ? "bg-[#a8499c]" : "bg-[#a8499c]"
+        } text-white shadow-md hover:bg-[#8f3a8a] transition-colors`}
       >
         {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
       </button>
@@ -43,38 +53,38 @@ const AdminSidebar = () => {
         <div className="text-2xl font-bold mb-8">
           Pro<span className="text-[#c8db00]">Design</span>
         </div>
-        
+
         <nav className="flex flex-col gap-2">
-          <Link 
-            to="/admin/dashboard" 
+          <Link
+            to="/admin/dashboard"
             className="flex items-center gap-3 p-3 hover:bg-[#8f3a8a] rounded-lg transition-colors"
             onClick={() => isMobile && setIsOpen(false)}
           >
-            <FiCalendar className="text-xl" /> 
+            <FiCalendar className="text-xl" />
             <span>Calendar</span>
           </Link>
-          <Link 
-            to="/admin/users" 
+          <Link
+            to="/admin/users"
             className="flex items-center gap-3 p-3 hover:bg-[#8f3a8a] rounded-lg transition-colors"
             onClick={() => isMobile && setIsOpen(false)}
           >
-            <FiUsers className="text-xl" /> 
+            <FiUsers className="text-xl" />
             <span>Manage Users & Teams</span>
           </Link>
-          <Link 
-            to="/admin/tasks" 
+          <Link
+            to="/admin/tasks"
             className="flex items-center gap-3 p-3 hover:bg-[#8f3a8a] rounded-lg transition-colors"
             onClick={() => isMobile && setIsOpen(false)}
           >
-            <FiClipboard className="text-xl" /> 
+            <FiClipboard className="text-xl" />
             <span>Approve Task Requests</span>
           </Link>
-          <Link 
-            to="/admin/budget" 
+          <Link
+            to="/admin/budget"
             className="flex items-center gap-3 p-3 hover:bg-[#8f3a8a] rounded-lg transition-colors"
             onClick={() => isMobile && setIsOpen(false)}
           >
-            <FiDollarSign className="text-xl" /> 
+            <FiDollarSign className="text-xl" />
             <span>Budget & Time Tracking</span>
           </Link>
           <Link
@@ -82,17 +92,15 @@ const AdminSidebar = () => {
             className="flex items-center gap-3 p-3 hover:bg-[#8f3a8a] rounded-lg transition-colors"
             onClick={() => isMobile && setIsOpen(false)}
           >
-            <FiClock className="text-xl" /> 
+            <FiClock className="text-xl" />
             <span>Timesheet</span>
           </Link>
         </nav>
-        
-        
       </div>
 
       {/* Overlay for mobile */}
       {isOpen && isMobile && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
           onClick={toggleSidebar}
         />

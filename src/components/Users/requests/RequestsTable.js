@@ -7,22 +7,28 @@ const RequestsTable = ({
   setFilterText,
   handleEdit,
   handleDelete,
-  setSelectedTask
+  setSelectedTask,
 }) => {
   // Department color mapping using Pantone colors
   const getDepartmentColor = (department) => {
-    switch(department?.toLowerCase()) {
-      case "leed": return "bg-[#a8499c]/10 text-[#a8499c]";
-      case "bim": return "bg-[#c8db00]/10 text-[#c8db00]";
-      case "mep": return "bg-[#818181]/10 text-[#818181]";
-      default: return "bg-gray-100 text-gray-800";
+    switch (department?.toLowerCase()) {
+      case "leed":
+        return "bg-[#a8499c]/10 text-[#a8499c]";
+      case "bim":
+        return "bg-[#c8db00]/10 text-[#c8db00]";
+      case "mep":
+        return "bg-[#818181]/10 text-[#818181]";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
     <div className="bg-white p-6 shadow rounded-lg border border-[#818181]/20">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">Requested Resources</h2>
+        <h2 className="text-xl font-semibold text-gray-900">
+          Requested Resources
+        </h2>
         <div className="relative w-full md:w-96">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <FiSearch className="text-[#818181]" />
@@ -57,8 +63,8 @@ const RequestsTable = ({
             </thead>
             <tbody className="divide-y divide-[#818181]/10">
               {filteredMembers.map((member) => (
-                <tr 
-                  key={member._id} 
+                <tr
+                  key={member._id}
                   className="hover:bg-[#a8499c]/5 transition-colors cursor-pointer group"
                   onClick={() => setSelectedTask(member)}
                 >
@@ -69,7 +75,7 @@ const RequestsTable = ({
                     </div>
                     <div className="text-sm text-[#818181]">{member.email}</div>
                   </td>
-                  
+
                   {/* Project Column */}
                   <td className="p-4">
                     <div className="font-medium">{member.projectCode}</div>
@@ -77,31 +83,35 @@ const RequestsTable = ({
                       {member.project}
                     </div>
                   </td>
-                  
+
                   {/* Department Column */}
                   <td className="p-4">
-                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getDepartmentColor(member.department)}`}>
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getDepartmentColor(
+                        member.department
+                      )}`}
+                    >
                       {member.department || "Unassigned"}
                     </span>
                   </td>
-                  
+
                   {/* Hours Column */}
                   <td className="p-4 font-medium text-gray-900">
                     {member.hours}
                   </td>
-                  
+
                   {/* Requester Column */}
                   <td className="p-4 text-[#818181] text-sm">
                     {member.requester}
                   </td>
-                  
+
                   {/* Notes Column */}
                   <td className="p-4">
                     <div className="text-sm text-[#818181] line-clamp-2 max-w-xs">
                       {member.Notes || "—"}
                     </div>
                   </td>
-                  
+
                   {/* Actions Column */}
                   <td className="p-4">
                     <div className="flex justify-end gap-2">

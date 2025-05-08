@@ -14,7 +14,7 @@ const ApproveTaskRequests = () => {
   const [filters, setFilters] = useState({
     requestedName: "",
     project: "",
-    date: ""
+    date: "",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,7 +33,7 @@ const ApproveTaskRequests = () => {
     handleApprove,
     handleReject,
     handleUpdateTask,
-    resetForm
+    resetForm,
   } = useTaskManagement();
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const ApproveTaskRequests = () => {
     try {
       const [requestsRes, tasksRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/requests`),
-        fetch(`${API_BASE_URL}/api/tasks`)
+        fetch(`${API_BASE_URL}/api/tasks`),
       ]);
 
       if (!requestsRes.ok || !tasksRes.ok) {
@@ -69,8 +69,8 @@ const ApproveTaskRequests = () => {
       const tasks = await tasksRes.json();
 
       setTaskRequests(requests);
-      setApprovedTasks(tasks.filter(t => t.status === "Approved"));
-      setRejectedTasks(tasks.filter(t => t.status === "Rejected"));
+      setApprovedTasks(tasks.filter((t) => t.status === "Approved"));
+      setRejectedTasks(tasks.filter((t) => t.status === "Rejected"));
     } catch (error) {
       console.error("Error fetching tasks:", error);
     } finally {
@@ -78,13 +78,19 @@ const ApproveTaskRequests = () => {
     }
   };
 
-  const filteredTasks = taskRequests.filter(task => {
-    const matchesName = !filters.requestedName || 
-      task.requestedName.toLowerCase().includes(filters.requestedName.toLowerCase());
-    const matchesProject = !filters.project || 
+  const filteredTasks = taskRequests.filter((task) => {
+    const matchesName =
+      !filters.requestedName ||
+      task.requestedName
+        .toLowerCase()
+        .includes(filters.requestedName.toLowerCase());
+    const matchesProject =
+      !filters.project ||
       task.project.toLowerCase().includes(filters.project.toLowerCase());
-    const matchesDate = !filters.date || 
-      (task.date && new Date(task.date).toISOString().split('T')[0] === filters.date);
+    const matchesDate =
+      !filters.date ||
+      (task.date &&
+        new Date(task.date).toISOString().split("T")[0] === filters.date);
 
     return matchesName && matchesProject && matchesDate;
   });
@@ -92,8 +98,8 @@ const ApproveTaskRequests = () => {
   const handleTaskApproved = async (taskId) => {
     const approvedTask = await handleApprove(taskId);
     if (approvedTask) {
-      setApprovedTasks(prev => [...prev, approvedTask.task]);
-      setTaskRequests(prev => prev.filter(t => t._id !== taskId));
+      setApprovedTasks((prev) => [...prev, approvedTask.task]);
+      setTaskRequests((prev) => prev.filter((t) => t._id !== taskId));
       fetchAllTasks();
     }
   };
@@ -101,8 +107,8 @@ const ApproveTaskRequests = () => {
   const handleTaskRejected = async (taskId) => {
     const rejectedTask = await handleReject(taskId);
     if (rejectedTask) {
-      setRejectedTasks(prev => [...prev, rejectedTask.task]);
-      setTaskRequests(prev => prev.filter(t => t._id !== taskId));
+      setRejectedTasks((prev) => [...prev, rejectedTask.task]);
+      setTaskRequests((prev) => prev.filter((t) => t._id !== taskId));
       fetchAllTasks();
     }
   };
@@ -111,12 +117,12 @@ const ApproveTaskRequests = () => {
     const updatedTask = await handleUpdateTask(taskId);
     if (updatedTask) {
       if (updatedTask.status === "Approved") {
-        setApprovedTasks(prev => 
-          prev.map(t => t._id === taskId ? updatedTask : t)
+        setApprovedTasks((prev) =>
+          prev.map((t) => (t._id === taskId ? updatedTask : t))
         );
       } else if (updatedTask.status === "Rejected") {
-        setRejectedTasks(prev => 
-          prev.map(t => t._id === taskId ? updatedTask : t)
+        setRejectedTasks((prev) =>
+          prev.map((t) => (t._id === taskId ? updatedTask : t))
         );
       }
       fetchAllTasks();
@@ -127,10 +133,10 @@ const ApproveTaskRequests = () => {
     const result = await handleDeleteDate(taskId, date);
     if (result) {
       if (result.deleted) {
-        setApprovedTasks(prev => prev.filter(t => t._id !== taskId));
+        setApprovedTasks((prev) => prev.filter((t) => t._id !== taskId));
       } else {
-        setApprovedTasks(prev => 
-          prev.map(t => t._id === taskId ? result.task : t)
+        setApprovedTasks((prev) =>
+          prev.map((t) => (t._id === taskId ? result.task : t))
         );
       }
       fetchAllTasks();
@@ -143,28 +149,37 @@ const ApproveTaskRequests = () => {
         <h2 className="text-2xl font-bold text-[#a8499c]">Task Management</h2>
       </div>
 
-      <FiltersPanel 
-        filters={filters} 
-        setFilters={setFilters} 
-      />
+      <FiltersPanel filters={filters} setFilters={setFilters} />
 
       <div className="bg-white rounded-lg shadow border border-gray-200">
         <div className="flex border-b border-gray-200">
           <button
-            className={`px-4 py-3 font-medium ${activeTab === 'pending' ? 'text-[#a8499c] border-b-2 border-[#a8499c]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('pending')}
+            className={`px-4 py-3 font-medium ${
+              activeTab === "pending"
+                ? "text-[#a8499c] border-b-2 border-[#a8499c]"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("pending")}
           >
             Pending ({taskRequests.length})
           </button>
           <button
-            className={`px-4 py-3 font-medium ${activeTab === 'approved' ? 'text-[#a8499c] border-b-2 border-[#a8499c]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('approved')}
+            className={`px-4 py-3 font-medium ${
+              activeTab === "approved"
+                ? "text-[#a8499c] border-b-2 border-[#a8499c]"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("approved")}
           >
             Approved ({approvedTasks.length})
           </button>
           <button
-            className={`px-4 py-3 font-medium ${activeTab === 'rejected' ? 'text-[#a8499c] border-b-2 border-[#a8499c]' : 'text-gray-500'}`}
-            onClick={() => setActiveTab('rejected')}
+            className={`px-4 py-3 font-medium ${
+              activeTab === "rejected"
+                ? "text-[#a8499c] border-b-2 border-[#a8499c]"
+                : "text-gray-500"
+            }`}
+            onClick={() => setActiveTab("rejected")}
           >
             Rejected ({rejectedTasks.length})
           </button>
@@ -174,12 +189,12 @@ const ApproveTaskRequests = () => {
           <div className="text-center py-8">Loading tasks...</div>
         ) : (
           <>
-            {activeTab === 'pending' && (
+            {activeTab === "pending" && (
               <>
                 {filteredTasks.length > 0 ? (
-                  <PendingTasksTable 
-                    tasks={filteredTasks} 
-                    setSelectedTask={setSelectedTask} 
+                  <PendingTasksTable
+                    tasks={filteredTasks}
+                    setSelectedTask={setSelectedTask}
                   />
                 ) : (
                   <div className="text-center py-8 text-gray-500">
@@ -189,7 +204,7 @@ const ApproveTaskRequests = () => {
               </>
             )}
 
-            {activeTab === 'approved' && (
+            {activeTab === "approved" && (
               <>
                 {approvedTasks.length > 0 ? (
                   <ApprovedRejectedTasksTable
@@ -206,7 +221,7 @@ const ApproveTaskRequests = () => {
               </>
             )}
 
-            {activeTab === 'rejected' && (
+            {activeTab === "rejected" && (
               <>
                 {rejectedTasks.length > 0 ? (
                   <ApprovedRejectedTasksTable
@@ -226,7 +241,7 @@ const ApproveTaskRequests = () => {
         )}
       </div>
 
-      {(selectedTask) && (
+      {selectedTask && (
         <TaskDetailsPanel
           selectedTask={selectedTask}
           setSelectedTask={setSelectedTask}

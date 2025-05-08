@@ -16,15 +16,26 @@ const ApprovedRejectedTasksTable = ({
 
   const { weekGroups, filteredRejectedTasks } = useMemo(() => {
     const applyFilters = (task) => {
-      if (nameFilter && !task.requestedName.toLowerCase().includes(nameFilter.toLowerCase())) {
+      if (
+        nameFilter &&
+        !task.requestedName.toLowerCase().includes(nameFilter.toLowerCase())
+      ) {
         return false;
       }
-      if (projectFilter && !task.project.toLowerCase().includes(projectFilter.toLowerCase())) {
+      if (
+        projectFilter &&
+        !task.project.toLowerCase().includes(projectFilter.toLowerCase())
+      ) {
         return false;
       }
       if (dateRange.start && dateRange.end && task.date) {
         const taskDate = parseISO(task.date);
-        if (!isWithinInterval(taskDate, { start: dateRange.start, end: dateRange.end })) {
+        if (
+          !isWithinInterval(taskDate, {
+            start: dateRange.start,
+            end: dateRange.end,
+          })
+        ) {
           return false;
         }
       }
@@ -51,7 +62,11 @@ const ApprovedRejectedTasksTable = ({
         const currentTask = taskMap.get(baseId);
         if (task.date) {
           const dateKey = new Date(task.date).toISOString();
-          if (!currentTask.allDates.some(d => new Date(d.date).toISOString() === dateKey)) {
+          if (
+            !currentTask.allDates.some(
+              (d) => new Date(d.date).toISOString() === dateKey
+            )
+          ) {
             currentTask.allDates.push({
               date: task.date,
               hours: task.approvedHours || task.hours,
@@ -68,7 +83,9 @@ const ApprovedRejectedTasksTable = ({
               date: dateInfo.date,
               approvedHours: dateInfo.hours,
               weekHours: task.weekHours.filter(
-                wh => new Date(wh.date).getTime() === new Date(dateInfo.date).getTime()
+                (wh) =>
+                  new Date(wh.date).getTime() ===
+                  new Date(dateInfo.date).getTime()
               ),
             }))
           : [task];
@@ -112,7 +129,8 @@ const ApprovedRejectedTasksTable = ({
     setDateRange({ start: null, end: null });
   };
 
-  const hasActiveFilters = nameFilter || projectFilter || dateRange.start || dateRange.end;
+  const hasActiveFilters =
+    nameFilter || projectFilter || dateRange.start || dateRange.end;
 
   if (approvedTasks.length === 0 && rejectedTasks.length === 0) {
     return (
@@ -126,7 +144,9 @@ const ApprovedRejectedTasksTable = ({
     <div className="bg-white rounded-lg shadow border border-gray-200">
       <div className="p-4 border-b border-gray-200 bg-[#f8f9fa]">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-[#a8499c]">Approved/Rejected Tasks</h2>
+          <h2 className="text-xl font-semibold text-[#a8499c]">
+            Approved/Rejected Tasks
+          </h2>
           <div className="flex gap-2">
             {hasActiveFilters && (
               <button
@@ -149,7 +169,9 @@ const ApprovedRejectedTasksTable = ({
       {showFilters && (
         <div className="bg-gray-50 p-4 border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">Name</label>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Name
+            </label>
             <input
               type="text"
               value={nameFilter}
@@ -159,7 +181,9 @@ const ApprovedRejectedTasksTable = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">Project</label>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Project
+            </label>
             <input
               type="text"
               value={projectFilter}
@@ -169,11 +193,15 @@ const ApprovedRejectedTasksTable = ({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1 text-gray-700">Date Range</label>
+            <label className="block text-sm font-medium mb-1 text-gray-700">
+              Date Range
+            </label>
             <div className="flex gap-2">
               <input
                 type="date"
-                value={dateRange.start ? format(dateRange.start, "yyyy-MM-dd") : ""}
+                value={
+                  dateRange.start ? format(dateRange.start, "yyyy-MM-dd") : ""
+                }
                 onChange={(e) =>
                   setDateRange({
                     ...dateRange,
@@ -200,7 +228,10 @@ const ApprovedRejectedTasksTable = ({
 
       <div className="overflow-y-auto max-h-[500px]">
         {weekGroups.map((week) => (
-          <div key={`week-${format(week.weekStart, "yyyy-MM-dd")}`} className="p-4 border-b border-gray-200 last:border-b-0">
+          <div
+            key={`week-${format(week.weekStart, "yyyy-MM-dd")}`}
+            className="p-4 border-b border-gray-200 last:border-b-0"
+          >
             <h3 className="font-medium mb-3 flex items-center text-[#a8499c]">
               <FiCalendar className="mr-2" />
               Week of {format(week.weekStart, "PP")}
@@ -209,12 +240,24 @@ const ApprovedRejectedTasksTable = ({
               <table className="w-full border-collapse">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Name</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Task</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Project</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Hours</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Date</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Actions</th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Name
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Task
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Project
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Hours
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Date
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -239,11 +282,21 @@ const ApprovedRejectedTasksTable = ({
               <table className="w-full border-collapse">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Name</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Task</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Project</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Status</th>
-                    <th className="p-2 text-left text-sm font-medium text-gray-700">Actions</th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Name
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Task
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Project
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Status
+                    </th>
+                    <th className="p-2 text-left text-sm font-medium text-gray-700">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -268,22 +321,26 @@ const ApprovedRejectedTasksTable = ({
 const TaskRow = React.memo(({ task, status, setSelectedTask }) => {
   const taskDate = task.date ? parseISO(task.date) : null;
   const weekHourEntry = task.weekHours?.find(
-    wh => task.date && new Date(wh.date).getTime() === taskDate?.getTime()
+    (wh) => task.date && new Date(wh.date).getTime() === taskDate?.getTime()
   );
 
   return (
     <tr className="hover:bg-gray-50">
-      <td className="p-2 text-sm border-b border-gray-200">{task.requestedName}</td>
+      <td className="p-2 text-sm border-b border-gray-200">
+        {task.requestedName}
+      </td>
       <td className="p-2 text-sm border-b border-gray-200">{task.Task}</td>
       <td className="p-2 text-sm border-b border-gray-200">{task.project}</td>
       {status === "Approved" && (
         <>
           <td className="p-2 text-sm border-b border-gray-200">
-            <span className={`px-2 py-1 rounded ${
-              (weekHourEntry?.hours || 0) > 8 
-                ? "bg-[#fef9c3] text-[#713f12]" 
-                : "bg-[#dcfce7] text-[#166534]"
-            }`}>
+            <span
+              className={`px-2 py-1 rounded ${
+                (weekHourEntry?.hours || 0) > 8
+                  ? "bg-[#fef9c3] text-[#713f12]"
+                  : "bg-[#dcfce7] text-[#166534]"
+              }`}
+            >
               {weekHourEntry?.hours || task.approvedHours || task.hours}
             </span>
           </td>

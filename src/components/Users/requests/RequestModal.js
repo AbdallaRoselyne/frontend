@@ -12,7 +12,7 @@ const RequestModal = ({
   members,
   projects,
   selectedTask,
-  setSelectedTask
+  setSelectedTask,
 }) => {
   if (!showModal && !selectedTask) return null;
 
@@ -40,7 +40,10 @@ const RequestModal = ({
             <div className="space-y-4">
               <DetailItem label="Name" value={selectedTask.requestedName} />
               <DetailItem label="Email" value={selectedTask.email} />
-              <DetailItem label="Project Code" value={selectedTask.projectCode} />
+              <DetailItem
+                label="Project Code"
+                value={selectedTask.projectCode}
+              />
               <DetailItem label="Project" value={selectedTask.project} />
               <DetailItem label="Department" value={selectedTask.department} />
               <DetailItem label="Hours" value={selectedTask.hours} />

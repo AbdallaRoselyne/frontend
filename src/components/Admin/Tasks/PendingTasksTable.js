@@ -6,7 +6,7 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
   const [expandedTask, setExpandedTask] = React.useState(null);
   const [sortConfig, setSortConfig] = React.useState({
     key: null,
-    direction: 'ascending'
+    direction: "ascending",
   });
 
   const toggleExpand = (taskId) => {
@@ -14,22 +14,22 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
   };
 
   const requestSort = (key) => {
-    let direction = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
   const sortedTasks = React.useMemo(() => {
     if (!sortConfig.key) return tasks;
-    
+
     return [...tasks].sort((a, b) => {
       if (a[sortConfig.key] < b[sortConfig.key]) {
-        return sortConfig.direction === 'ascending' ? -1 : 1;
+        return sortConfig.direction === "ascending" ? -1 : 1;
       }
       if (a[sortConfig.key] > b[sortConfig.key]) {
-        return sortConfig.direction === 'ascending' ? 1 : -1;
+        return sortConfig.direction === "ascending" ? 1 : -1;
       }
       return 0;
     });
@@ -46,10 +46,14 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-4 border-b border-gray-100 bg-[#f8f9fa]">
-        <h2 className="text-xl font-semibold text-[#a8499c]">Pending Task Requests</h2>
-        <p className="text-sm text-gray-500 mt-1">{tasks.length} pending requests</p>
+        <h2 className="text-xl font-semibold text-[#a8499c]">
+          Pending Task Requests
+        </h2>
+        <p className="text-sm text-gray-500 mt-1">
+          {tasks.length} pending requests
+        </p>
       </div>
-      
+
       {/* Desktop Table */}
       <div className="hidden md:block">
         <div className="overflow-x-auto">
@@ -57,25 +61,31 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
             <thead className="bg-gray-50">
               <tr>
                 {[
-                  { key: 'requestedName', label: 'Name' },
-                  { key: 'Task', label: 'Task' },
-                  { key: 'hours', label: 'Hours' },
-                  { key: 'project', label: 'Project' },
-                  { key: 'department', label: 'Department' },
-                  { key: 'requester', label: 'Requester' },
-                  { key: 'status', label: 'Status' },
-                  { key: 'actions', label: 'Actions' }
+                  { key: "requestedName", label: "Name" },
+                  { key: "Task", label: "Task" },
+                  { key: "hours", label: "Hours" },
+                  { key: "project", label: "Project" },
+                  { key: "department", label: "Department" },
+                  { key: "requester", label: "Requester" },
+                  { key: "status", label: "Status" },
+                  { key: "actions", label: "Actions" },
                 ].map((header) => (
-                  <th 
+                  <th
                     key={header.key}
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                    onClick={() => header.key !== 'actions' && requestSort(header.key)}
+                    onClick={() =>
+                      header.key !== "actions" && requestSort(header.key)
+                    }
                   >
                     <div className="flex items-center">
                       {header.label}
                       {sortConfig.key === header.key && (
                         <span className="ml-1">
-                          {sortConfig.direction === 'ascending' ? <FiChevronUp size={14} /> : <FiChevronDown size={14} />}
+                          {sortConfig.direction === "ascending" ? (
+                            <FiChevronUp size={14} />
+                          ) : (
+                            <FiChevronDown size={14} />
+                          )}
                         </span>
                       )}
                     </div>
@@ -85,7 +95,10 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedTasks.map((task) => (
-                <tr key={task._id} className="hover:bg-gray-50 transition-colors">
+                <tr
+                  key={task._id}
+                  className="hover:bg-gray-50 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {task.requestedName}
                   </td>
@@ -102,7 +115,7 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                     {task.department}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {task.requester || '-'}
+                    {task.requester || "-"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <StatusBadge status={task.status} />
@@ -125,26 +138,32 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
       {/* Mobile Cards */}
       <div className="md:hidden">
         {sortedTasks.map((task) => (
-          <div 
-            key={task._id} 
+          <div
+            key={task._id}
             className="border-b border-gray-200 last:border-b-0 p-4 hover:bg-gray-50 transition-colors"
           >
-            <div 
+            <div
               className="flex justify-between items-center cursor-pointer"
               onClick={() => toggleExpand(task._id)}
             >
               <div>
-                <h3 className="font-medium text-gray-900">{task.requestedName}</h3>
+                <h3 className="font-medium text-gray-900">
+                  {task.requestedName}
+                </h3>
                 <p className="text-sm text-gray-500">{task.Task}</p>
               </div>
               <div className="flex items-center gap-2">
                 <StatusBadge status={task.status} />
                 <button className="text-gray-400">
-                  {expandedTask === task._id ? <FiChevronUp /> : <FiChevronDown />}
+                  {expandedTask === task._id ? (
+                    <FiChevronUp />
+                  ) : (
+                    <FiChevronDown />
+                  )}
                 </button>
               </div>
             </div>
-            
+
             {expandedTask === task._id && (
               <div className="mt-3 space-y-2">
                 <div className="grid grid-cols-2 gap-2">
@@ -162,12 +181,12 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">Requester</p>
-                    <p className="text-sm">{task.requester || '-'}</p>
+                    <p className="text-sm">{task.requester || "-"}</p>
                   </div>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Notes</p>
-                  <p className="text-sm">{task.Notes || 'No notes'}</p>
+                  <p className="text-sm">{task.Notes || "No notes"}</p>
                 </div>
                 <button
                   onClick={() => setSelectedTask(task)}

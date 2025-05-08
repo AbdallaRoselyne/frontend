@@ -7,7 +7,9 @@ const AdminApprove = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-6">
         <Toaster position="top-right" />
-        <h1 className="text-3xl font-bold text-[#a8499c] mb-8">Task Management Dashboard</h1>
+        <h1 className="text-3xl font-bold text-[#a8499c] mb-8">
+          Task Management Dashboard
+        </h1>
         <ApproveTaskRequests />
       </div>
     </div>
