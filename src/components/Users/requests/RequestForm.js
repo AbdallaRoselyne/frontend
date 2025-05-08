@@ -11,9 +11,14 @@ const RequestForm = ({
   const [selectedMembers, setSelectedMembers] = useState(
     requestData.requestedName ? requestData.requestedName.split(/\s*,\s*/) : []
   );
-  const [selectedProject, setSelectedProject] = useState(requestData.project);
+  const [selectedProject, setSelectedProject] = useState(
+    requestData.isCustomProject ? "Other" : requestData.project || ""
+  );
   const [isCustomProject, setIsCustomProject] = useState(
     requestData.isCustomProject || false
+  );
+  const [customProjectName, setCustomProjectName] = useState(
+    requestData.isCustomProject ? requestData.project : ""
   );
 
   // Update emails when selectedMembers changes
@@ -34,46 +39,50 @@ const RequestForm = ({
     }
   }, [selectedMembers, members, requestData.email, handleChange]);
 
-  // Update project-related fields when selectedProject changes
-  useEffect(() => {
-    if (selectedProject === "Other") {
+  // Handle project changes
+  const handleProjectChange = (e) => {
+    const projectName = e.target.value;
+    setSelectedProject(projectName);
+
+    if (projectName === "Other") {
       setIsCustomProject(true);
       handleChange({
         target: { name: "isCustomProject", value: true },
       });
       // Clear project-related fields
-      handleChange({
-        target: { name: "projectCode", value: "" },
-      });
-      handleChange({
-        target: { name: "department", value: "" },
-      });
-    } else if (selectedProject && selectedProject !== "Other") {
+      handleChange({ target: { name: "projectCode", value: "" } });
+      handleChange({ target: { name: "department", value: "" } });
+    } else {
       setIsCustomProject(false);
       handleChange({
         target: { name: "isCustomProject", value: false },
       });
-      const project = projects.find((p) => p.name === selectedProject);
+      const project = projects.find((p) => p.name === projectName);
       if (project) {
-        if (requestData.projectCode !== project.code) {
-          handleChange({
-            target: { name: "projectCode", value: project.code },
-          });
-        }
-        if (requestData.department !== project.department) {
-          handleChange({
-            target: { name: "department", value: project.department },
-          });
-        }
+        handleChange({
+          target: { name: "projectCode", value: project.code },
+        });
+        handleChange({
+          target: { name: "department", value: project.department },
+        });
       }
     }
-  }, [
-    selectedProject,
-    handleChange,
-    projects,
-    requestData.department,
-    requestData.projectCode,
-  ]);
+
+    handleChange({
+      target: {
+        name: "project",
+        value: projectName === "Other" ? customProjectName : projectName,
+      },
+    });
+  };
+
+  const handleCustomProjectNameChange = (e) => {
+    const value = e.target.value;
+    setCustomProjectName(value);
+    handleChange({
+      target: { name: "project", value },
+    });
+  };
 
   const handleMemberChange = (e) => {
     const options = e.target.options;
@@ -86,14 +95,6 @@ const RequestForm = ({
     setSelectedMembers(selected);
     handleChange({
       target: { name: "requestedName", value: selected.join(", ") },
-    });
-  };
-
-  const handleProjectChange = (e) => {
-    const projectName = e.target.value;
-    setSelectedProject(projectName);
-    handleChange({
-      target: { name: "project", value: projectName },
     });
   };
 
@@ -152,7 +153,7 @@ const RequestForm = ({
         </label>
         <select
           name="project"
-          value={selectedProject || ""}
+          value={selectedProject}
           onChange={handleProjectChange}
           className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent transition-colors"
           required
@@ -176,9 +177,9 @@ const RequestForm = ({
             </label>
             <input
               type="text"
-              name="project"
-              value={requestData.project || ""}
-              onChange={handleChange}
+              name="customProjectName"
+              value={customProjectName}
+              onChange={handleCustomProjectNameChange}
               className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
               required
             />
@@ -200,6 +201,7 @@ const RequestForm = ({
               <option value="LEED">LEED</option>
               <option value="BIM">BIM</option>
               <option value="MEP">MEP</option>
+              <option value="ADMIN">ADMIN</option>
               <option value="Other">Other</option>
             </select>
           </div>
