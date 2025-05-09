@@ -21,7 +21,6 @@ const UserTimesheet = () => {
       if (!token) throw new Error("No authentication token found");
 
       const decoded = jwtDecode(token);
-      console.log("Decoded token:", decoded);
 
       if (!decoded.email) throw new Error("Email not found in token");
       return decoded.email.toLowerCase();

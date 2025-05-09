@@ -57,6 +57,7 @@ const RequestsTable = ({
                 <th className="p-4">Department</th>
                 <th className="p-4">Hours</th>
                 <th className="p-4">Requester</th>
+                <th className="p-4">Task</th>
                 <th className="p-4">Notes</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
@@ -103,6 +104,10 @@ const RequestsTable = ({
                   {/* Requester Column */}
                   <td className="p-4 text-[#818181] text-sm">
                     {member.requester}
+                  </td>
+                  {/* Task Column */}
+                  <td className="p-4 text-[#818181] text-sm">
+                    {member.Task || "—"}
                   </td>
 
                   {/* Notes Column */}

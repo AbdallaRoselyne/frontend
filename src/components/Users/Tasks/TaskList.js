@@ -23,7 +23,6 @@ const TaskList = () => {
       if (!token) throw new Error("No authentication token found");
 
       const decoded = jwtDecode(token);
-      console.log("Decoded token:", decoded);
 
       if (!decoded.email) throw new Error("Email not found in token");
       return decoded.email.toLowerCase();
@@ -40,7 +39,6 @@ const TaskList = () => {
     try {
       setLoading(true);
       const userEmail = getEmailFromToken();
-      console.log("Fetching tasks for:", userEmail);
 
       const response = await fetch(
         `${API_BASE_URL}/api/tasks/user/${encodeURIComponent(userEmail)}`,
@@ -62,7 +60,6 @@ const TaskList = () => {
       }
 
       const data = await response.json();
-      console.log("Tasks received:", data);
       setTasks(data);
       setFilteredTasks(data);
     } catch (error) {
