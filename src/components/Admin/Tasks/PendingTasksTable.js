@@ -99,28 +99,28 @@ const PendingTasksTable = ({ tasks, setSelectedTask }) => {
                   key={task._id}
                   className="hover:bg-gray-50 transition-colors"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900 break-words whitespace-normal max-w-xs">
                     {task.requestedName}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500 break-words whitespace-normal max-w-xs">
                     {task.Task}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {task.hours}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500 break-words whitespace-normal max-w-xs">
                     {task.project}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {task.department}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500">
                     {task.requester || "-"}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4">
                     <StatusBadge status={task.status} />
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 text-right text-sm font-medium">
                     <button
                       onClick={() => setSelectedTask(task)}
                       className="text-[#a8499c] hover:text-[#8a3a7d] flex items-center gap-1 bg-[#f3e6f1] px-3 py-1 rounded-md hover:bg-[#e8d4e6] transition-colors"

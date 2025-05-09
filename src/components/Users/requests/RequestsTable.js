@@ -70,7 +70,7 @@ const RequestsTable = ({
                   onClick={() => setSelectedTask(member)}
                 >
                   {/* Resource Column */}
-                  <td className="p-4">
+                  <td className="p-4 break-words whitespace-normal max-w-xs">
                     <div className="font-medium text-gray-900 group-hover:text-[#a8499c] transition-colors">
                       {member.requestedName}
                     </div>
@@ -106,12 +106,12 @@ const RequestsTable = ({
                     {member.requester}
                   </td>
                   {/* Task Column */}
-                  <td className="p-4 text-[#818181] text-sm">
+                  <td className="p-4 text-[#818181] text-sm break-words whitespace-normal max-w-xs">
                     {member.Task || "—"}
                   </td>
 
                   {/* Notes Column */}
-                  <td className="p-4">
+                  <td className="p-4 break-words whitespace-normal max-w-xs">
                     <div className="text-sm text-[#818181] line-clamp-2 max-w-xs">
                       {member.Notes || "—"}
                     </div>
