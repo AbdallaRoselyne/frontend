@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FiUserPlus } from "react-icons/fi";
+import { FiUserPlus, FiUser } from "react-icons/fi";
 import RequestsTable from "./RequestsTable";
 import RequestModal from "./RequestModal";
 
@@ -15,6 +15,7 @@ const RequestsPage = () => {
   const [projects, setProjects] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
   const [members, setMembers] = useState([]);
+  const currentUserEmail = localStorage.getItem("currentUserEmail");
   const [requestData, setRequestData] = useState({
     requestedName: "",
     email: "",
@@ -182,6 +183,12 @@ const RequestsPage = () => {
             <h1 className="text-2xl font-bold leading-tight text-gray-900">
               Resource Requests
             </h1>
+            {currentUserEmail && (
+            <span className="flex items-center gap-1 ml-2 px-3 py-1 bg-[#a8499c]/10 rounded-full text-sm text-[#a8499c]">
+              <FiUser className="text-[#a8499c]" />
+              {currentUserEmail}
+            </span>
+          )}
             <p className="mt-2 text-sm text-[#818181]">
               Manage all your team resource requests in one place
             </p>

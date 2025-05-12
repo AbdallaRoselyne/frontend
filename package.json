@@ -36,7 +36,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "serve -s build -l $PORT || 3000",
+    "start": "serve -s build -l 3000",
     "build": "react-scripts build",
     "predeploy": "npm run build",
     "test": "react-scripts test",
