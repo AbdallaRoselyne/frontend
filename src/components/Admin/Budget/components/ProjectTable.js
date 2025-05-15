@@ -51,7 +51,7 @@ const ProjectTable = ({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
-                      onClick={() => onSelect(project)}  // Fixed: Proper click handler
+                      onClick={() => onSelect(project)}  
                       className="text-left"
                     >
                       <div className="text-sm font-medium text-indigo-600 hover:text-indigo-800">

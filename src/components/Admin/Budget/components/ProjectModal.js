@@ -1,14 +1,14 @@
 import React from "react";
 import { FiX } from "react-icons/fi";
-import { departments, stages, projectFields } from "../constants";
+import { departments, stages, projectFields, director } from "../constants";
 
-export const ProjectModal = ({ 
-  open, 
-  onClose, 
-  title, 
-  project, 
-  onChange, 
-  onSubmit, 
+export const ProjectModal = ({
+  open,
+  onClose,
+  title,
+  project,
+  onChange,
+  onSubmit,
 }) => {
   if (!open) return null;
 
@@ -18,9 +18,14 @@ export const ProjectModal = ({
         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
-        
-        <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-        
+
+        <span
+          className="hidden sm:inline-block sm:align-middle sm:h-screen"
+          aria-hidden="true"
+        >
+          &#8203;
+        </span>
+
         <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
           <div className="absolute top-0 right-0 pt-4 pr-4">
             <button
@@ -32,17 +37,20 @@ export const ProjectModal = ({
               <FiX className="h-6 w-6" />
             </button>
           </div>
-          
+
           <div className="sm:flex sm:items-start">
             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
               <h3 className="text-lg leading-6 font-medium text-gray-900">
                 {title}
               </h3>
-              
+
               <form onSubmit={onSubmit} className="mt-5 space-y-4">
-                {projectFields.map(field => (
+                {projectFields.map((field) => (
                   <div key={field.name}>
-                    <label htmlFor={field.name} className="block text-sm font-medium text-gray-700">
+                    <label
+                      htmlFor={field.name}
+                      className="block text-sm font-medium text-gray-700"
+                    >
                       {field.label}
                     </label>
                     <input
@@ -56,9 +64,36 @@ export const ProjectModal = ({
                     />
                   </div>
                 ))}
-                
+
                 <div>
-                  <label htmlFor="department" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="director"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Director
+                  </label>
+                  <select
+                    id="director"
+                    name="director"
+                    value={project?.director || ""}
+                    onChange={onChange}
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                    required
+                  >
+                    <option value="">Select Director</option>
+                    {director.map((dir) => (
+                      <option key={dir} value={dir}>
+                        {dir}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="department"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Department
                   </label>
                   <select
@@ -70,14 +105,19 @@ export const ProjectModal = ({
                     required
                   >
                     <option value="">Select Department</option>
-                    {departments.map(dept => (
-                      <option key={dept} value={dept}>{dept}</option>
+                    {departments.map((dept) => (
+                      <option key={dept} value={dept}>
+                        {dept}
+                      </option>
                     ))}
                   </select>
                 </div>
-                
+
                 <div>
-                  <label htmlFor="stage" className="block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="stage"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Stage
                   </label>
                   <select
@@ -89,12 +129,14 @@ export const ProjectModal = ({
                     required
                   >
                     <option value="">Select Stage</option>
-                    {stages.map(stage => (
-                      <option key={stage} value={stage}>{stage}</option>
+                    {stages.map((stage) => (
+                      <option key={stage} value={stage}>
+                        {stage}
+                      </option>
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="pt-4">
                   <button
                     type="submit"

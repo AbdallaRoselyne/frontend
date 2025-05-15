@@ -38,8 +38,8 @@ const AdminMembers = () => {
     if (!window.confirm("Are you sure you want to remove this member?")) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/members/${id}`, { 
-        method: "DELETE" 
+      const response = await fetch(`${API_BASE_URL}/api/members/${id}`, {
+        method: "DELETE"
       });
 
       if (!response.ok) throw new Error("Failed to delete member");
@@ -50,13 +50,22 @@ const AdminMembers = () => {
     }
   };
 
-  const filteredMembers = members.filter((member) => {
-    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         member.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDepartment = departmentFilter === "all" || 
-                            member.department.toLowerCase() === departmentFilter.toLowerCase();
-    return matchesSearch && matchesDepartment;
-  });
+  const filteredMembers = members
+    .filter((member) => {
+      const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesDepartment = departmentFilter === "all" ||
+        member.department.toLowerCase() === departmentFilter.toLowerCase();
+      return matchesSearch && matchesDepartment;
+    })
+    .sort((a, b) => {
+      const firstNameA = a.name.split(' ')[0].toLowerCase();
+      const firstNameB = b.name.split(' ')[0].toLowerCase();
+
+      if (firstNameA < firstNameB) return -1;
+      if (firstNameA > firstNameB) return 1;
+      return 0;
+    });
 
   const getDepartmentColor = (department) => {
     switch (department?.toUpperCase()) {
@@ -150,7 +159,7 @@ const AdminMembers = () => {
                       {member.department}
                     </span>
                   </div>
-                  
+
                   <div className="mt-4 space-y-2">
                     <div className="flex items-center text-gray-600">
                       <span className="font-medium w-24">Email:</span>
@@ -165,7 +174,7 @@ const AdminMembers = () => {
                       <span>${member.billableRate || "0"}/hr</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 flex gap-2">
                     <button
                       onClick={() => {

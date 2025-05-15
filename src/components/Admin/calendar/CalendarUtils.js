@@ -25,10 +25,10 @@ export const fetchApprovedTasks = async () => {
  */
 export const getDepartmentColorClass = (department) => {
   const departmentColors = {
-    LEED: "bg-[#a8499c]/20 border-[#a8499c]/30 text-[#a8499c]",
-    BIM: "bg-[#c8db00]/20 border-[#c8db00]/30 text-[#818181]",
-    MEP: "bg-[#6366f1]/20 border-[#818181]/30 text-[#818181]",
-    default: "bg-gray-200/20 border-gray-300/30 text-gray-700",
+    LEED: "bg-[#a8499c]/20 border-l-4 border-[#a8499c] text-[#a8499c]",
+    BIM: "bg-[#c8db00]/20 border-l-4 border-[#c8db00] text-[#818181]",
+    MEP: "bg-[#6366f1]/20 border-l-4 border-[#818181] text-[#818181]",
+    default: "bg-gray-200/20 border-l-4 border-gray-300 text-gray-700",
   };
   return departmentColors[department?.toUpperCase()] || departmentColors.default;
 };
@@ -40,73 +40,82 @@ export const getDepartmentColorClass = (department) => {
  */
 export const scheduleTasksSequentially = (tasks) => {
   const scheduledTasks = [];
-  const userDayMap = {}; // Format: { "user@email-YYYY-MM-DD": { nextAvailableTime: Date } }
+  const userDayMap = {};
 
-  // First, process tasks that already have scheduled times
+  const WORKDAY_START = { hour: 8, minute: 30 };
+  const WORKDAY_END = { hour: 16, minute: 45 };
+
+  const getWorkdayStart = (date) => {
+    const start = new Date(date);
+    start.setHours(WORKDAY_START.hour, WORKDAY_START.minute, 0, 0);
+    return start;
+  };
+
+  const getWorkdayEnd = (date) => {
+    const end = new Date(date);
+    end.setHours(WORKDAY_END.hour, WORKDAY_END.minute, 0, 0);
+    return end;
+  };
+
+  const getNextDay = (date) => {
+    const next = new Date(date);
+    next.setDate(next.getDate() + 1);
+    return next;
+  };
+
+  const scheduleForUser = (task, userKey) => {
+    let remainingHours = Math.max(task.approvedHours || task.hours || 1, 0.5);
+    let currentDate = new Date(task.date || task.weekHours?.[0]?.date || task.createdAt);
+    currentDate.setHours(0, 0, 0, 0);
+
+    while (remainingHours > 0) {
+      const dateKey = currentDate.toISOString().split("T")[0];
+      const workdayStart = getWorkdayStart(currentDate);
+      const workdayEnd = getWorkdayEnd(currentDate);
+
+      if (!userDayMap[userKey]) userDayMap[userKey] = {};
+      if (!userDayMap[userKey][dateKey]) {
+        userDayMap[userKey][dateKey] = new Date(workdayStart);
+      }
+
+      let nextAvailable = userDayMap[userKey][dateKey];
+      if (nextAvailable > workdayEnd) {
+        currentDate = getNextDay(currentDate);
+        continue;
+      }
+
+      const availableMinutes = (workdayEnd - nextAvailable) / (1000 * 60);
+      const taskMinutes = Math.min(remainingHours * 60, availableMinutes);
+      const taskStart = new Date(nextAvailable);
+      const taskEnd = new Date(taskStart.getTime() + taskMinutes * 60 * 1000);
+
+      scheduledTasks.push({
+        ...task,
+        start: taskStart.toISOString(),
+        end: taskEnd.toISOString(),
+      });
+
+      remainingHours -= taskMinutes / 60;
+      userDayMap[userKey][dateKey] = new Date(taskEnd);
+
+      if (remainingHours > 0) {
+        currentDate = getNextDay(currentDate);
+      }
+    }
+  };
+
   tasks.forEach((task) => {
     if (task.start && task.end) {
-      const dateKey = new Date(task.start).toISOString().split("T")[0];
-      const userKey = `${task.email || task.requestedName}-${dateKey}`;
-
       scheduledTasks.push(task);
-
-      // Update the user's next available time
-      if (
-        !userDayMap[userKey] ||
-        new Date(task.end) > userDayMap[userKey].nextAvailableTime
-      ) {
-        userDayMap[userKey] = {
-          nextAvailableTime: new Date(task.end),
-        };
-      }
     }
   });
 
-  // Then process unscheduled tasks
   const unscheduledTasks = tasks.filter((task) => !task.start || !task.end);
-
-  // Sort by creation date or priority if needed
   unscheduledTasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
   unscheduledTasks.forEach((task) => {
-    const taskDate = task.date || task.weekHours?.[0]?.date;
-    if (!taskDate) return;
-
-    const dateKey = new Date(taskDate).toISOString().split("T")[0];
-    const userKey = `${task.email || task.requestedName}-${dateKey}`;
-
-    // Initialize if new user/day
-    if (!userDayMap[userKey]) {
-      userDayMap[userKey] = {
-        nextAvailableTime: new Date(taskDate),
-      };
-      // Set to 8:30 AM
-      userDayMap[userKey].nextAvailableTime.setHours(8, 30, 0, 0);
-    }
-
-    const duration = Math.max(task.approvedHours || task.hours || 1, 0.5);
-    const start = new Date(userDayMap[userKey].nextAvailableTime);
-    const end = new Date(start);
-    end.setHours(start.getHours() + Math.floor(duration));
-    end.setMinutes(start.getMinutes() + (duration % 1) * 60);
-
-    // Check against 4:45 PM end time
-    const dayEnd = new Date(start);
-    dayEnd.setHours(16, 45, 0, 0);
-
-    if (end > dayEnd) {
-      console.warn(`Task doesn't fit in workday: ${task.Task}`);
-      return;
-    }
-
-    scheduledTasks.push({
-      ...task,
-      start: start.toISOString(),
-      end: end.toISOString(),
-    });
-
-    // Update for next task
-    userDayMap[userKey].nextAvailableTime = new Date(end);
+    const userKey = task.email || task.requestedName || "unknown-user";
+    scheduleForUser(task, userKey);
   });
 
   return scheduledTasks;
@@ -232,4 +241,21 @@ export const formatDate = (date) => {
  */
 export const formatTime = (date) => {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+};
+
+/**
+ * Renders custom FullCalendar event content (Asana/Teamwork style)
+ * @param {Object} eventInfo - Event render info from FullCalendar
+ * @returns {JSX.Element} Formatted task element
+ */
+export const renderEventContent = (eventInfo) => {
+  const { title } = eventInfo.event;
+  const { requestedName, project } = eventInfo.event.extendedProps;
+
+  return (
+    <div className="px-2 py-1 rounded-lg text-sm font-medium leading-tight">
+      <div className="truncate">{title}</div>
+      <div className="text-xs text-gray-500">{requestedName} · {project}</div>
+    </div>
+  );
 };

@@ -11,14 +11,19 @@ const RequestForm = ({
   const [selectedMembers, setSelectedMembers] = useState(
     requestData.requestedName ? requestData.requestedName.split(/\s*,\s*/) : []
   );
-  const [selectedProject, setSelectedProject] = useState(
-    requestData.isCustomProject ? "Other" : requestData.project || ""
+  const [projectSelectionType, setProjectSelectionType] = useState(
+    requestData.isCustomProject ? "other" : "standard"
   );
-  const [isCustomProject, setIsCustomProject] = useState(
-    requestData.isCustomProject || false
+  const [selectedStandardProject, setSelectedStandardProject] = useState(
+    requestData.isCustomProject ? "" : requestData.project || ""
   );
   const [customProjectName, setCustomProjectName] = useState(
     requestData.isCustomProject ? requestData.project : ""
+  );
+
+  // Sort projects alphabetically
+  const sortedProjects = [...projects].sort((a, b) => 
+    a.name.localeCompare(b.name)
   );
 
   // Update emails when selectedMembers changes
@@ -39,41 +44,57 @@ const RequestForm = ({
     }
   }, [selectedMembers, members, requestData.email, handleChange]);
 
-  // Handle project changes
-  const handleProjectChange = (e) => {
-    const projectName = e.target.value;
-    setSelectedProject(projectName);
+  // Handle project type change (standard vs other)
+  const handleProjectTypeChange = (e) => {
+    const type = e.target.value;
+    setProjectSelectionType(type);
 
-    if (projectName === "Other") {
-      setIsCustomProject(true);
+    if (type === "other") {
       handleChange({
         target: { name: "isCustomProject", value: true },
       });
       // Clear project-related fields
       handleChange({ target: { name: "projectCode", value: "" } });
       handleChange({ target: { name: "department", value: "" } });
+      handleChange({ target: { name: "project", value: customProjectName } });
     } else {
-      setIsCustomProject(false);
       handleChange({
         target: { name: "isCustomProject", value: false },
       });
-      const project = projects.find((p) => p.name === projectName);
-      if (project) {
-        handleChange({
-          target: { name: "projectCode", value: project.code },
-        });
-        handleChange({
-          target: { name: "department", value: project.department },
-        });
+      if (selectedStandardProject) {
+        const project = projects.find((p) => p.name === selectedStandardProject);
+        if (project) {
+          handleChange({
+            target: { name: "projectCode", value: project.code },
+          });
+          handleChange({
+            target: { name: "department", value: project.department },
+          });
+          handleChange({
+            target: { name: "project", value: selectedStandardProject },
+          });
+        }
       }
     }
+  };
 
-    handleChange({
-      target: {
-        name: "project",
-        value: projectName === "Other" ? customProjectName : projectName,
-      },
-    });
+  // Handle standard project selection
+  const handleStandardProjectChange = (e) => {
+    const projectName = e.target.value;
+    setSelectedStandardProject(projectName);
+
+    const project = projects.find((p) => p.name === projectName);
+    if (project) {
+      handleChange({
+        target: { name: "projectCode", value: project.code },
+      });
+      handleChange({
+        target: { name: "department", value: project.department },
+      });
+      handleChange({
+        target: { name: "project", value: projectName },
+      });
+    }
   };
 
   const handleCustomProjectNameChange = (e) => {
@@ -105,7 +126,7 @@ const RequestForm = ({
 
   return (
     <form className="space-y-4" onSubmit={handleFormSubmit}>
-      {/* Member Name Dropdown - Now multiple select */}
+      {/* Member Name Dropdown */}
       <div>
         <label className="block text-sm font-medium text-[#818181] mb-1">
           Member Name(s)
@@ -117,7 +138,7 @@ const RequestForm = ({
           onChange={handleMemberChange}
           className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent transition-colors h-auto min-h-[50px]"
           required
-          size={Math.min(members.length, 5)} // Show up to 5 options at once
+          size={Math.min(members.length, 5)}
         >
           {members.map((member) => (
             <option key={member._id} value={member.name}>
@@ -146,31 +167,66 @@ const RequestForm = ({
         />
       </div>
 
-      {/* Project Dropdown */}
+      {/* Project Type Selection */}
       <div>
         <label className="block text-sm font-medium text-[#818181] mb-1">
-          Project
+          Project Type
         </label>
-        <select
-          name="project"
-          value={selectedProject}
-          onChange={handleProjectChange}
-          className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent transition-colors"
-          required
-        >
-          <option value="">Select Project</option>
-          {projects.map((project) => (
-            <option key={project.name} value={project.name}>
-              {project.name}
-            </option>
-          ))}
-          <option value="Other">Other (Custom Project)</option>
-        </select>
+        <div className="flex space-x-4">
+          <label className="inline-flex items-center">
+            <input
+              type="radio"
+              name="projectType"
+              value="standard"
+              checked={projectSelectionType === "standard"}
+              onChange={handleProjectTypeChange}
+              className="text-[#a8499c] focus:ring-[#a8499c]/50"
+            />
+            <span className="ml-2">Standard Project</span>
+          </label>
+          <label className="inline-flex items-center">
+            <input
+              type="radio"
+              name="projectType"
+              value="other"
+              checked={projectSelectionType === "other"}
+              onChange={handleProjectTypeChange}
+              className="text-[#a8499c] focus:ring-[#a8499c]/50"
+            />
+            <span className="ml-2">Other Project</span>
+          </label>
+        </div>
       </div>
 
-      {isCustomProject ? (
+      {/* Standard Project Selection */}
+      {projectSelectionType === "standard" && (
+        <div>
+          <label className="block text-sm font-medium text-[#818181] mb-1">
+            Select Project
+          </label>
+          <select
+            name="standardProject"
+            value={selectedStandardProject}
+            onChange={handleStandardProjectChange}
+            className="w-full p-3 border border-[#818181]/30 rounded-lg focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent transition-colors"
+            required
+          >
+            <option value="">Select Project</option>
+            {sortedProjects.map((project) => (
+              <option 
+                key={`${project._id}-${project.code}`} 
+                value={project.name}
+              >
+                {project.name} ({project.code}) - {project.department}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Custom Project Fields */}
+      {projectSelectionType === "other" && (
         <>
-          {/* Custom Project Name */}
           <div>
             <label className="block text-sm font-medium text-[#818181] mb-1">
               Project Name
@@ -185,7 +241,6 @@ const RequestForm = ({
             />
           </div>
 
-          {/* Department for Custom Project */}
           <div>
             <label className="block text-sm font-medium text-[#818181] mb-1">
               Department
@@ -206,40 +261,42 @@ const RequestForm = ({
             </select>
           </div>
         </>
-      ) : (
-        <>
-          {/* Project Code */}
-          <div>
-            <label className="block text-sm font-medium text-[#818181] mb-1">
-              Project Code
-            </label>
-            <input
-              type="text"
-              name="projectCode"
-              value={requestData.projectCode || ""}
-              onChange={handleChange}
-              className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
-              required
-              readOnly
-            />
-          </div>
+      )}
 
-          {/* Department */}
-          <div>
-            <label className="block text-sm font-medium text-[#818181] mb-1">
-              Department
-            </label>
-            <input
-              type="text"
-              name="department"
-              value={requestData.department || ""}
-              onChange={handleChange}
-              className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
-              required
-              readOnly
-            />
-          </div>
-        </>
+      {/* Project Code (readonly for standard projects) */}
+      {projectSelectionType === "standard" && (
+        <div>
+          <label className="block text-sm font-medium text-[#818181] mb-1">
+            Project Code
+          </label>
+          <input
+            type="text"
+            name="projectCode"
+            value={requestData.projectCode || ""}
+            onChange={handleChange}
+            className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
+            required
+            readOnly
+          />
+        </div>
+      )}
+
+      {/* Department (readonly for standard projects) */}
+      {projectSelectionType === "standard" && (
+        <div>
+          <label className="block text-sm font-medium text-[#818181] mb-1">
+            Department
+          </label>
+          <input
+            type="text"
+            name="department"
+            value={requestData.department || ""}
+            onChange={handleChange}
+            className="w-full p-3 border border-[#818181]/30 rounded-lg bg-[#818181]/5 focus:ring-2 focus:ring-[#a8499c]/50 focus:border-transparent"
+            required
+            readOnly
+          />
+        </div>
       )}
 
       {/* Hours */}

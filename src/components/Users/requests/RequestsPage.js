@@ -52,7 +52,11 @@ const RequestsPage = () => {
   const fetchProjects = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/projects`);
-      setProjects(response.data);
+      // Sort projects alphabetically by project name
+      const sortedProjects = response.data.sort((a, b) => 
+        (a.name || "").localeCompare(b.name || "")
+      );
+      setProjects(sortedProjects);
     } catch (error) {
       console.error("Error fetching projects:", error);
     }
@@ -61,7 +65,11 @@ const RequestsPage = () => {
   const fetchMembers = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/api/members`);
-      setMembers(response.data);
+      // Sort members alphabetically by name
+      const sortedMembers = response.data.sort((a, b) => 
+        a.name.localeCompare(b.name)
+      );
+      setMembers(sortedMembers);
     } catch (error) {
       console.error("Error fetching members:", error);
     }

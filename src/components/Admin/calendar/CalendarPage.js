@@ -46,12 +46,11 @@ const CalendarPage = () => {
     loadTasks();
   }, []);
 
-  // Navigate to specific date when date filter changes
   useEffect(() => {
     if (filters.date) {
       const calendarApi = calendarRef.current.getApi();
       calendarApi.gotoDate(filters.date);
-      setView("timeGridDay"); // Switch to day view when searching by date
+      setView("timeGridDay");
     }
   }, [filters.date]);
 
@@ -95,7 +94,7 @@ const CalendarPage = () => {
 
   const calendarEvents = scheduledEvents.map((task) => ({
     id: task._id || `${task.Task}-${task.requestedName}-${task.start}`,
-    title: `${task.Task} (${task.requestedName})`,
+    title: `${task.Task}`,
     start: task.start,
     end: task.end,
     className: getDepartmentColorClass(task.department),
@@ -135,7 +134,7 @@ const CalendarPage = () => {
 
         <CalendarFilters filters={filters} setFilters={setFilters} />
 
-        <div className="bg-white p-4 md:p-6 shadow rounded-xl border border-[#818181]">
+        <div className="bg-white p-4 md:p-6 shadow rounded-xl border border-[#e0e0e0]">
           <CalendarToolbar
             events={calendarEvents}
             view={view}
@@ -156,32 +155,17 @@ const CalendarPage = () => {
               headerToolbar={false}
               events={calendarEvents}
               eventClick={handleEventClick}
-              datesSet={(dateInfo) => {
-                // Update view type when user changes view manually
-                setView(dateInfo.view.type);
-              }}
+              datesSet={(dateInfo) => setView(dateInfo.view.type)}
               eventContent={(eventInfo) => (
-                <div className="p-1 h-full">
-                  <div className="h-full rounded-md p-1 flex flex-col">
-                    <div className="flex justify-between items-start">
-                      <strong className="block text-sm font-semibold truncate">
-                        {eventInfo.event.title.split(" (")[0]}
-                      </strong>
-                      <span className="text-xs bg-[#818181] bg-opacity-10 px-1 rounded whitespace-nowrap">
-                        {eventInfo.event.extendedProps.hours}h
-                      </span>
-                    </div>
-                    <p className="text-xs text-[#818181] mt-1 truncate">
-                      {eventInfo.event.extendedProps.project || "..."}
-                    </p>
-                    <p className="text-xs text-[#818181] truncate">
-                      {eventInfo.event.extendedProps.requestedName || "..."}
-                    </p>
-                    <div className="mt-auto pt-1">
-                      <span className="text-[10px] font-medium px-1 py-0.5 rounded bg-opacity-20 bg-[#818181] truncate">
-                        {eventInfo.event.extendedProps.department || "..."}
-                      </span>
-                    </div>
+                <div className="px-2 py-1 text-white h-full w-full overflow-hidden rounded-md bg-opacity-90">
+                  <div className="text-xs font-semibold truncate">
+                    {eventInfo.event.title}
+                  </div>
+                  <div className="text-[10px] truncate">
+                    {eventInfo.event.extendedProps.project}
+                  </div>
+                  <div className="text-[10px] truncate">
+                    {eventInfo.event.extendedProps.requestedName}
                   </div>
                 </div>
               )}
@@ -189,13 +173,13 @@ const CalendarPage = () => {
               editable
               selectable
               businessHours={{
-                daysOfWeek: [1, 2, 3, 4, 5], // Monday to Friday
+                daysOfWeek: [1, 2, 3, 4, 5],
                 startTime: "08:30",
                 endTime: "16:45",
               }}
-              slotMinTime="08:00:00" // Show from 8:00 AM
-              slotMaxTime="17:00:00" // Show until 5:00 PM
-              slotDuration="00:30:00" // 30-minute slots
+              slotMinTime="08:00:00"
+              slotMaxTime="17:00:00"
+              slotDuration="00:30:00"
               allDaySlot={false}
               nowIndicator
               dayHeaderFormat={{ weekday: "short", day: "numeric" }}

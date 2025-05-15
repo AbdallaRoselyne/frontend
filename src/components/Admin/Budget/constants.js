@@ -1,5 +1,9 @@
-export const departments = ["LEED", "BIM", "MEP", "ADMIN"];
-
+export const director = [
+  "Vikram Bhujun",
+  "Chandraprakash Seebaluck",
+  "Niraj Boodhoo",
+];
+export const departments = ["LEED", "BIM", "MEP", "ADMIN",];
 export const stages = [
   "Preparation and Brief",
   "Survey",
@@ -20,5 +24,4 @@ export const projectFields = [
   { label: "Budget ($)", name: "budget", type: "number" },
   { label: "Estimated Hours", name: "hours", type: "number" },
   { label: "Team Leader", name: "teamLeader", type: "text" },
-  { label: "Director", name: "director", type: "text" },
 ];
